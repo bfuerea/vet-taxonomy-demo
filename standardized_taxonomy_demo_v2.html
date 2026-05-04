@@ -44,6 +44,27 @@
         .step-section { transition: all 0.3s ease; }
         .step-section.hidden { display: none; }
         .rank-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 6px; font-size: 9px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.05em; background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+        .source-badge { display: inline-flex; align-items: center; gap: 3px; padding: 2px 6px; border-radius: 4px; font-size: 8px; font-weight: bold; }
+        .source-badge.local { background: rgba(34, 197, 94, 0.2); color: #86efac; }
+        .source-badge.api { background: rgba(59, 130, 246, 0.2); color: #93c5fd; }
+        .info-btn { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 50%; background: rgba(59, 130, 246, 0.3); color: #60a5fa; font-size: 11px; font-weight: bold; cursor: pointer; border: 1px solid rgba(59, 130, 246, 0.5); transition: all 0.2s; }
+        .info-btn:hover { background: rgba(59, 130, 246, 0.5); border-color: #3b82f6; }
+        .text-truncated { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; display: inline-block; }
+        .api-status-badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; border-radius: 6px; font-size: 9px; font-weight: bold; text-transform: uppercase; background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+        .api-status-badge.loading { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border-color: rgba(245, 158, 11, 0.3); animation: pulse 1.5s ease-in-out infinite; }
+        .api-status-badge.success { background: rgba(34, 197, 94, 0.15); color: #86efac; border-color: rgba(34, 197, 94, 0.3); }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+        #vernacular-modal { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.8); display: none; z-index: 60; align-items: center; justify-content: center; }
+        #vernacular-modal.active { display: flex; }
+        .vernacular-modal-content { background: #1e293b; border: 1px solid rgba(148, 163, 184, 0.3); border-radius: 16px; padding: 24px; max-width: 500px; max-height: 80vh; overflow-auto; }
+        .vernacular-modal-header { font-size: 14px; font-weight: bold; color: #f8fafc; margin-bottom: 16px; }
+        .vernacular-modal-body { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .vernacular-lang-section { padding: 12px; background: rgba(30, 41, 59, 0.8); border-radius: 8px; }
+        .vernacular-lang-label { font-size: 10px; font-weight: bold; color: #94a3b8; text-transform: uppercase; margin-bottom: 8px; }
+        .vernacular-lang-text { font-size: 13px; color: #e2e8f0; word-break: break-word; }
+        .vernacular-modal-footer { margin-top: 16px; text-align: right; }
+        .vernacular-modal-close { padding: 6px 12px; background: #475569; color: #f8fafc; border: none; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
+        .vernacular-modal-close:hover { background: #64748b; }
     </style>
 </head>
 <body class="min-h-screen p-4 lg:p-8">
@@ -328,6 +349,26 @@
         </div>
     </div>
 
+    <!-- Vernacular Names Modal -->
+    <div id="vernacular-modal" role="dialog" aria-modal="true" aria-labelledby="vernacular-modal-title">
+        <div class="vernacular-modal-content">
+            <div class="vernacular-modal-header" id="vernacular-modal-title"></div>
+            <div class="vernacular-modal-body">
+                <div class="vernacular-lang-section">
+                    <div class="vernacular-lang-label" data-lang-ro="English" data-lang-en="English">English</div>
+                    <div class="vernacular-lang-text" id="vernacular-modal-en"></div>
+                </div>
+                <div class="vernacular-lang-section">
+                    <div class="vernacular-lang-label" data-lang-ro="Română" data-lang-en="Romanian">Română</div>
+                    <div class="vernacular-lang-text" id="vernacular-modal-ro"></div>
+                </div>
+            </div>
+            <div class="vernacular-modal-footer">
+                <button class="vernacular-modal-close" id="vernacular-modal-close" onclick="closeVernacularModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // ── Configuration ─────────────────────────────────────────────────────────
         const COL_DATASET_ID = '3LR';
@@ -351,6 +392,91 @@
         
         // Cache for browse results (genus -> species list)
         const browseCache = new Map();
+        
+        // API call tracking
+        let currentAPILoadStatus = { localCount: 0, apiCount: 0, isLoading: false };
+
+        // ── Modal & Vernacular Display ────────────────────────────────────────────
+        function openVernacularModal(scientificName, englishName, romanianName) {
+            document.getElementById('vernacular-modal-title').textContent = scientificName;
+            document.getElementById('vernacular-modal-en').textContent = englishName || '—';
+            document.getElementById('vernacular-modal-ro').textContent = romanianName || '—';
+            document.getElementById('vernacular-modal').classList.add('active');
+        }
+
+        function closeVernacularModal() {
+            document.getElementById('vernacular-modal').classList.remove('active');
+        }
+
+        // Close modal on background click
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('vernacular-modal').addEventListener('click', (e) => {
+                if (e.target.id === 'vernacular-modal') {
+                    closeVernacularModal();
+                }
+            });
+        });
+
+        // ── Text Truncation with Info Button ──────────────────────────────────────
+        function renderTruncatedVernacular(text, taxon, language) {
+            if (!text) return '—';
+            if (text.length <= 60) return text;
+            
+            const truncated = text.substring(0, 57) + '...';
+            return `<span class="text-truncated" title="${text}">${truncated}</span>
+                    <button class="info-btn" onclick="openVernacularModal('${taxon.scientific_name.replace(/'/g, "\\'")}', 
+                        '${(taxon.english_vernacular || '').replace(/'/g, "\\'")}', 
+                        '${(taxon.romanian_vernacular || '').replace(/'/g, "\\'")}')">i</button>`;
+        }
+
+        // ── Vernacular Names Retrieval ───────────────────────────────────────────
+        async function getVernacularNames(taxon) {
+            const result = { en: '', ro: '' };
+            
+            // English: direct from taxon
+            result.en = taxon.english_vernacular && taxon.english_vernacular !== 'Not found' 
+                ? taxon.english_vernacular 
+                : '';
+            
+            // Romanian: local → user translations → glossary → CoL → GBIF
+            if (taxon.romanian_vernacular && taxon.romanian_vernacular !== 'Negăsit') {
+                result.ro = taxon.romanian_vernacular;
+            } else if (userTranslations[taxon.scientific_name]) {
+                result.ro = userTranslations[taxon.scientific_name];
+            } else if (taxon.english_vernacular && glossary[taxon.english_vernacular]) {
+                result.ro = glossary[taxon.english_vernacular];
+            } else {
+                // Try CoL API if we have a valid ID
+                if (taxon.col_internal_id && !taxon.col_internal_id.startsWith('DOMESTIC_')) {
+                    try {
+                        const colName = await fetchCoLVernacular(taxon.col_internal_id);
+                        if (colName) result.ro = colName;
+                    } catch (e) {
+                        console.warn('CoL vernacular fetch failed:', e);
+                    }
+                }
+            }
+            
+            return result;
+        }
+
+        // ── API Status Badge Update ───────────────────────────────────────────────
+        function updateAPIStatusBadge(localCount, apiCount, isLoading = false) {
+            const badge = document.getElementById('api-status-badge');
+            if (!badge) return;
+            
+            if (isLoading) {
+                badge.className = 'api-status-badge loading';
+                badge.innerHTML = '<span class="loading-spinner w-3 h-3 inline-block"></span> Loading from API...';
+            } else if (apiCount > 0 || localCount > 0) {
+                badge.className = 'api-status-badge success';
+                badge.innerHTML = `✓ Loaded (${apiCount} remote, ${localCount} local)`;
+            } else {
+                badge.innerHTML = '';
+            }
+            
+            currentAPILoadStatus = { localCount, apiCount, isLoading };
+        }
 
         // ── UI Utilities ──────────────────────────────────────────────────────────
         function showToast(msg, type='info') {
@@ -671,7 +797,7 @@
 
         // ── CoL API helpers ──────────────────────────────────────────────────────
         // Tries api.catalogue.life (CoL v2, CORS-enabled) first,
-        // then falls back to GBIF species search.
+        // then falls back to GBIF species search. Returns results with vernacular data.
         async function fetchColSpeciesForGenus(genus, limit = 50) {
             // Strategy 1: CoL v2 public REST API (CORS-friendly)
             try {
@@ -687,6 +813,8 @@
                         scientificName: r.name?.scientificName || r.scientificName || '',
                         authorship: r.name?.authorship || r.authorship || '',
                         id: r.id || r.usageId || null,
+                        englishName: (r.name?.vernacularNames || []).find(v => v.language === 'en')?.name || '',
+                        romanianName: (r.name?.vernacularNames || []).find(v => v.language === 'ro')?.name || '',
                         source: 'col'
                     })).filter(r => r.scientificName);
                     if (filtered.length > 0) return filtered;
@@ -716,6 +844,8 @@
                         authorship: r.authorship || '',
                         id: null,
                         gbifKey: r.key,
+                        englishName: r.vernacularName || '',
+                        romanianName: '',
                         source: 'gbif'
                     })).filter(r => r.scientificName);
             } catch (e) {
@@ -740,14 +870,77 @@
                 const genus = genusName.split(' ')[0];
                 const cacheKey = `genus_${genus.toLowerCase()}`;
                 
-                let species;
-                if (browseCache.has(cacheKey)) {
-                    species = browseCache.get(cacheKey);
+                // First: show local species (from standardized taxonomy)
+                let localSpecies = colTaxonomy.filter(taxon => {
+                    const gen = taxon.scientific_name?.split(' ')[0] || '';
+                    return gen.toLowerCase() === genus.toLowerCase();
+                });
+                
+                // Render local results first
+                if (localSpecies.length > 0) {
+                    updateAPIStatusBadge(localSpecies.length, 0, false);
+                    await renderGenusSpeciesListWithSource(localSpecies, 'local');
+                    resultsDiv.classList.remove('hidden');
+                    loadingDiv.classList.add('hidden');
                 } else {
-                    species = await fetchColSpeciesForGenus(genus, 50);
-                    browseCache.set(cacheKey, species);
+                    // No local results, show loading
+                    loadingDiv.classList.remove('hidden');
+                    updateAPIStatusBadge(0, 0, true);
                 }
                 
+                // Then: fetch from API
+                let apiSpecies = [];
+                if (browseCache.has(cacheKey)) {
+                    apiSpecies = browseCache.get(cacheKey);
+                } else {
+                    try {
+                        apiSpecies = await fetchColSpeciesForGenus(genus, 50);
+                        browseCache.set(cacheKey, apiSpecies);
+                    } catch (e) {
+                        console.error('API fetch error:', e);
+                        if (localSpecies.length === 0) {
+                            // Only show error if no local results
+                            resultsDiv.innerHTML = `
+                                <div class="text-center text-slate-500 py-4">
+                                    <p class="text-sm">${lang === 'ro' ? 'Eroare la încărcare' : 'Error loading'}</p>
+                                    <p class="text-xs text-slate-600 mt-1">${e.message}</p>
+                                </div>
+                            `;
+                        }
+                        apiSpecies = [];
+                    }
+                }
+                
+                // Render all results (local + API)
+                const allSpecies = [
+                    ...localSpecies.map(s => ({ ...s, source: 'local' })),
+                    ...apiSpecies.map(s => ({ ...s, source: 'api' }))
+                ];
+                
+                updateAPIStatusBadge(localSpecies.length, apiSpecies.length, false);
+                await renderGenusSpeciesListWithSource(allSpecies, 'mixed');
+                
+                if (allSpecies.length > 0) {
+                    resultsDiv.classList.remove('hidden');
+                }
+                
+                // Show success toast
+                showToast(lang === 'ro' 
+                    ? `${apiSpecies.length} specii din CoL + ${localSpecies.length} locale`
+                    : `${apiSpecies.length} species from CoL + ${localSpecies.length} local`, 'success');
+                
+            } catch (e) {
+                console.error('Genus browse error:', e);
+                resultsDiv.innerHTML = `
+                    <div class="text-center text-slate-500 py-4">
+                        <p class="text-sm">${lang === 'ro' ? 'Eroare necunoscută' : 'Unknown error'}</p>
+                    </div>
+                `;
+                resultsDiv.classList.remove('hidden');
+            } finally {
+                loadingDiv.classList.add('hidden');
+            }
+        }
                 renderGenusSpeciesList(species);
                 
             } catch (e) {
@@ -792,12 +985,28 @@
                 const colId = taxon.id || taxon.usageId || taxon.col_id;
                 const colUrl = colId ? `${COL_BASE_URL}/${COL_DATASET_ID}/taxon/${colId}` : null;
                 
+                // Determine source and add appropriate badge
+                const sourceBadge = taxon.source === 'local' 
+                    ? '<span class="source-badge local">📦 Local</span>'
+                    : '<span class="source-badge api">🌐 API</span>';
+                
+                // Build vernacular section
+                let vernacularHtml = '';
+                if (taxon.englishName || taxon.romanianName) {
+                    vernacularHtml = `<div class="text-[9px] text-slate-500 mt-1">
+                        ${taxon.englishName ? `<span class="mr-2">🇬🇧 ${taxon.englishName}</span>` : ''}
+                        ${taxon.romanianName ? `<span>🇷🇴 ${taxon.romanianName}</span>` : ''}
+                    </div>`;
+                }
+                
                 div.innerHTML = `
                     <div class="flex-1 min-w-0">
                         <div class="font-bold text-slate-300 text-sm italic truncate">${taxon.scientificName}</div>
                         <div class="text-[10px] text-slate-500">${taxon.authorship || ''}</div>
+                        ${vernacularHtml}
                     </div>
                     <div class="flex items-center gap-2 flex-shrink-0">
+                        ${sourceBadge}
                         <span class="px-2 py-0.5 bg-blue-900/30 text-blue-300 rounded text-[9px] font-bold uppercase">CoL</span>
                         ${colUrl ? `
                             <a href="${colUrl}" target="_blank" class="text-slate-400 hover:text-blue-400 transition-colors" title="View in CoL">
@@ -819,8 +1028,9 @@
                         rank: 'species',
                         col_internal_id: colId,
                         authorship: taxon.authorship,
-                        is_col_browse: true,
-                        vernacular: { english: '', romanian: '' }
+                        english_vernacular: taxon.englishName || '',
+                        romanian_vernacular: taxon.romanianName || '',
+                        is_col_browse: true
                     };
                     
                     // Hide browse panel and show details
@@ -837,6 +1047,11 @@
                 
                 list.appendChild(div);
             });
+        }
+
+        // ── Render Species List with Source Indicator ──────────────────────────────
+        async function renderGenusSpeciesListWithSource(species, mode = 'mixed') {
+            await renderGenusSpeciesList(species);
         }
 
         // ── CoL Browse Functionality ─────────────────────────────────────────────
@@ -883,8 +1098,21 @@
             const list = document.getElementById('species-list');
             list.innerHTML = '';
             
-            document.getElementById('species-count').textContent = 
-                `${species.length} ${lang === 'ro' ? 'din CoL' : 'from CoL'}`;
+            // Create count display with status badge
+            const countDiv = document.createElement('div');
+            countDiv.className = 'flex justify-between items-center mb-3 pb-2 border-b border-slate-800';
+            
+            const countSpan = document.createElement('span');
+            countSpan.id = 'species-count';
+            countSpan.textContent = `${species.length} ${lang === 'ro' ? 'din CoL' : 'from CoL'}`;
+            
+            const statusBadge = document.createElement('span');
+            statusBadge.id = 'api-status-badge';
+            statusBadge.className = 'api-status-badge';
+            
+            countDiv.appendChild(countSpan);
+            countDiv.appendChild(statusBadge);
+            list.appendChild(countDiv);
             
             // Add browse header with different text for expanded mode
             const headerDiv = document.createElement('div');
@@ -927,12 +1155,28 @@
                 const colId = taxon.id || taxon.usageId || taxon.col_id;
                 const colUrl = colId ? `${COL_BASE_URL}/${COL_DATASET_ID}/taxon/${colId}` : null;
                 
+                // Determine source badge
+                const sourceBadge = taxon.source === 'local' 
+                    ? '<span class="source-badge local">📦 Local</span>'
+                    : '<span class="source-badge api">🌐 API</span>';
+                
+                // Build vernacular section
+                let vernacularHtml = '';
+                if (taxon.englishName || taxon.romanianName) {
+                    vernacularHtml = `<div class="text-[9px] text-slate-500 mt-1">
+                        ${taxon.englishName ? `<span class="mr-2">🇬🇧 ${taxon.englishName}</span>` : ''}
+                        ${taxon.romanianName ? `<span>🇷🇴 ${taxon.romanianName}</span>` : ''}
+                    </div>`;
+                }
+                
                 div.innerHTML = `
-                    <div class="flex-1">
-                        <div class="font-bold text-slate-300 text-sm italic">${taxon.scientificName}</div>
+                    <div class="flex-1 min-w-0">
+                        <div class="font-bold text-slate-300 text-sm italic truncate">${taxon.scientificName}</div>
                         <div class="text-[10px] text-slate-500">${taxon.authorship || ''}</div>
+                        ${vernacularHtml}
                     </div>
-                    <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-2 flex-shrink-0">
+                        ${sourceBadge}
                         <span class="px-2 py-0.5 bg-slate-700/50 text-slate-400 rounded text-[9px] font-bold uppercase">SPECIES</span>
                         ${colUrl ? `
                             <a href="${colUrl}" target="_blank" class="text-slate-400 hover:text-blue-400 transition-colors" title="View in CoL">

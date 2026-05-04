@@ -119,7 +119,7 @@
         // Fetch taxonomy data from external JSON
         async function loadTaxonomyData() {
             try {
-                const response = await fetch('./taxonomy_complete_seed.json');
+                const response = await fetch('./data/taxonomy_complete_seed.json');
                 if (!response.ok) throw new Error('Network response was not ok');
                 taxonomyData = await response.json();
                 init();

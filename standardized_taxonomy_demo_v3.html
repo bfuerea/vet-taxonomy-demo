@@ -354,6 +354,7 @@
                         <div class="flex gap-2">
                             <button id="btn-copy" class="text-[10px] text-blue-400 uppercase font-bold hover:text-blue-300 px-2 py-1 rounded hover:bg-slate-800 transition-colors">Copy</button>
                             <button id="btn-download" class="text-[10px] text-green-400 uppercase font-bold hover:text-green-300 px-2 py-1 rounded hover:bg-slate-800 transition-colors">Download</button>
+                            <button id="btn-download-db" class="hidden text-[10px] text-amber-400 uppercase font-bold hover:text-amber-300 px-2 py-1 rounded hover:bg-slate-800 transition-colors" title="Download updated taxonomy database JSON">DB JSON</button>
                         </div>
                     </div>
                     <pre id="json-preview" class="p-4 text-[10px] font-mono text-emerald-400 overflow-auto custom-scrollbar flex-grow"></pre>
@@ -414,6 +415,7 @@
         let currentBrowseGenus = null; // Which genus was last browsed
         let currentGenusBrowseResults = [];
         let currentGenusBrowseStats = { localCount: 0, apiCount: 0 };
+        let promotedCoLRecordCount = 0;
         
         // Cache for browse results (genus -> species list)
         const browseCache = new Map();
@@ -870,7 +872,8 @@
             const names = [
                 ...(usage?.name?.vernacularNames || []),
                 ...(usage?.vernacularNames || []),
-                ...(usage?.usage?.vernacularNames || [])
+                ...(usage?.usage?.vernacularNames || []),
+                ...(usage?.usage?.name?.vernacularNames || [])
             ];
             const match = names.find(v => languages.includes(String(v.language || '').toLowerCase()));
             return cleanBrowseValue(match?.name || match?.vernacularName);
@@ -883,6 +886,10 @@
                 id: getCoLUsageId(usage),
                 englishName: getVernacularFromUsage(usage, ['en', 'eng']),
                 romanianName: getVernacularFromUsage(usage, ['ro', 'ron', 'rom']),
+                status: cleanBrowseValue(usage?.status || usage?.usage?.status) || 'accepted',
+                rank: cleanBrowseValue(usage?.rank || usage?.name?.rank || usage?.usage?.rank || usage?.usage?.name?.rank) || 'species',
+                classification: usage?.classification || [],
+                rawUsage: usage,
                 source: 'col'
             };
         }
@@ -898,6 +905,10 @@
                 gbifKey: taxon?.gbifKey || null,
                 englishName: cleanBrowseValue(taxon?.englishName || taxon?.english_vernacular),
                 romanianName: cleanBrowseValue(taxon?.romanianName || taxon?.romanian_vernacular),
+                status: cleanBrowseValue(taxon?.status) || 'accepted',
+                rank: cleanBrowseValue(taxon?.rank) || 'species',
+                classification: taxon?.classification || taxon?.col_classification || taxon?.originalTaxon?.classification || taxon?.originalTaxon?.col_classification || [],
+                rawUsage: taxon?.rawUsage || null,
                 source: source || taxon?.source || 'api',
                 originalTaxon: taxon?.originalTaxon || taxon
             };
@@ -1012,6 +1023,165 @@
                     ? 'Nu s-a putut conecta la CoL sau GBIF. Verificați conexiunea.'
                     : 'Could not reach CoL or GBIF. Please check your connection.');
             }
+        }
+
+        function getClassificationEntry(classification, rank) {
+            const normalizedRank = normalizeBrowseKey(rank);
+            return (classification || []).find(item => normalizeBrowseKey(item.rank) === normalizedRank) || null;
+        }
+
+        function getClassificationName(classification, rank) {
+            return cleanBrowseValue(getClassificationEntry(classification, rank)?.name);
+        }
+
+        function buildBreadcrumbLinks(classification, scientificName) {
+            const coreRanks = ['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species'];
+            const links = [];
+
+            coreRanks.forEach(rank => {
+                const entry = getClassificationEntry(classification, rank);
+                if (entry?.name) {
+                    links.push({
+                        rank,
+                        name: cleanBrowseValue(entry.name),
+                        id: entry.id || null
+                    });
+                }
+            });
+
+            if (scientificName && !links.some(link => normalizeBrowseKey(link.name) === normalizeBrowseKey(scientificName))) {
+                links.push({
+                    rank: 'species',
+                    name: scientificName,
+                    id: null
+                });
+            }
+
+            return links.filter(link => link.name);
+        }
+
+        function buildBreadcrumbFromLinks(links) {
+            return (links || []).map(link => link.name).filter(Boolean).join(' > ');
+        }
+
+        function getCategoryForTaxonomyRecord(record) {
+            const genus = record.c_genus || record.scientific_name?.split(' ')[0] || '';
+            const matchedCategory = Object.entries(taxonomyMap.categories || {}).find(([, data]) =>
+                data.genera?.some(g => normalizeBrowseKey(g) === normalizeBrowseKey(genus))
+            );
+            return matchedCategory?.[0] || selectedCategory || record.category_group || 'Alte animale';
+        }
+
+        async function fetchCoLSearchUsageForSpecies(taxon) {
+            const scientificName = taxon?.scientificName || taxon?.scientific_name;
+            if (!scientificName) return null;
+
+            try {
+                const url = `${COL_API_BASE_URL}/${COL_DATASET_ID}/nameusage/search?q=${encodeURIComponent(scientificName)}&rank=species&limit=20&offset=0`;
+                const response = await fetch(url, { headers: { 'Accept': 'application/json' } });
+                if (!response.ok) return null;
+
+                const data = await response.json();
+                const results = data.result || data.results || data.items || [];
+                const wantedId = taxon.id || taxon.col_internal_id || null;
+                const exactName = normalizeBrowseKey(scientificName);
+
+                return results.find(result => wantedId && String(getCoLResultId(result)) === String(wantedId)) ||
+                    results.find(result => getCoLResultNameCandidates(result).some(name => normalizeBrowseKey(name) === exactName)) ||
+                    results[0] ||
+                    null;
+            } catch (e) {
+                console.warn('CoL classification lookup failed:', e);
+                return null;
+            }
+        }
+
+        async function ensureBrowseTaxonClassification(taxon) {
+            if (taxon?.classification?.length) return taxon;
+
+            const result = await fetchCoLSearchUsageForSpecies(taxon);
+            if (!result) return taxon;
+
+            return {
+                ...taxon,
+                ...normalizeCoLUsage(result),
+                classification: result.classification || taxon.classification || [],
+                rawUsage: result
+            };
+        }
+
+        function buildTaxonomyRecordFromBrowseTaxon(taxon) {
+            const classification = taxon.classification || [];
+            const scientificName = cleanBrowseValue(taxon.scientificName || taxon.scientific_name);
+            const breadcrumbLinks = buildBreadcrumbLinks(classification, scientificName);
+            const breadcrumb = buildBreadcrumbFromLinks(breadcrumbLinks);
+            const genus = getClassificationName(classification, 'genus') || scientificName.split(' ')[0] || '';
+            const species = getClassificationName(classification, 'species') || scientificName;
+
+            const record = {
+                col_internal_id: taxon.id || taxon.col_internal_id || null,
+                rank: taxon.rank || getClassificationEntry(classification, 'species')?.rank || 'species',
+                status: taxon.status || 'accepted',
+                scientific_name: scientificName,
+                authorship: cleanBrowseValue(taxon.authorship),
+                c_kingdom: getClassificationName(classification, 'kingdom'),
+                c_phylum: getClassificationName(classification, 'phylum'),
+                c_class: getClassificationName(classification, 'class'),
+                c_order: getClassificationName(classification, 'order'),
+                c_family: getClassificationName(classification, 'family'),
+                c_genus: genus,
+                c_species: species,
+                breadcrumb,
+                breadcrumb_links: breadcrumbLinks,
+                english_vernacular: cleanBrowseValue(taxon.englishName || taxon.english_vernacular),
+                romanian_vernacular: cleanBrowseValue(taxon.romanianName || taxon.romanian_vernacular) || 'Negăsit',
+                category_group: '',
+                is_domestic: false,
+                has_breeds: false,
+                breeds: [],
+                is_col_browse: true,
+                is_col_promoted: true,
+                promoted_at: new Date().toISOString()
+            };
+
+            record.category_group = getCategoryForTaxonomyRecord(record);
+            return record;
+        }
+
+        function upsertTaxonomyRecord(record) {
+            const id = getUsableCoLId(record);
+            const existingIndex = colTaxonomy.findIndex(item =>
+                (id && getUsableCoLId(item) === id) ||
+                normalizeBrowseKey(item.scientific_name) === normalizeBrowseKey(record.scientific_name)
+            );
+
+            if (existingIndex >= 0) {
+                const wasPromoted = colTaxonomy[existingIndex].is_col_promoted;
+                colTaxonomy[existingIndex] = {
+                    ...colTaxonomy[existingIndex],
+                    ...record
+                };
+                if (!wasPromoted && record.is_col_promoted) {
+                    promotedCoLRecordCount++;
+                    document.getElementById('btn-download-db')?.classList.remove('hidden');
+                }
+                return colTaxonomy[existingIndex];
+            }
+
+            colTaxonomy.push(record);
+            promotedCoLRecordCount++;
+            document.getElementById('btn-download-db')?.classList.remove('hidden');
+            return record;
+        }
+
+        async function promoteBrowseTaxonToDatabase(taxon) {
+            if (taxon.source === 'local' && taxon.originalTaxon?.scientific_name) {
+                return taxon.originalTaxon;
+            }
+
+            const enrichedTaxon = await ensureBrowseTaxonClassification(taxon);
+            const record = buildTaxonomyRecordFromBrowseTaxon(enrichedTaxon);
+            return upsertTaxonomyRecord(record);
         }
 
         function clearGenusBrowseSearch({ hide = false } = {}) {
@@ -1245,28 +1415,17 @@
                 `;
                 
                 // Click to select this CoL species
-                div.onclick = (e) => {
+                div.onclick = async (e) => {
                     if (e.target.closest('a')) return; // Don't select if clicking link
-                    
-                    // Create a taxon object for this CoL species
-                    const colTaxon = taxon.source === 'local' && taxon.originalTaxon?.scientific_name
-                        ? { ...taxon.originalTaxon }
-                        : {
-                        scientific_name: taxon.scientificName,
-                        rank: 'species',
-                        col_internal_id: colId,
-                        authorship: taxon.authorship,
-                        english_vernacular: taxon.englishName || '',
-                        romanian_vernacular: taxon.romanianName || '',
-                        is_col_browse: true
-                    };
+
+                    const colTaxon = await promoteBrowseTaxonToDatabase(taxon);
                     
                     // Hide browse panel and show details
                     hideBrowsePanel();
                     document.getElementById('step2-panel-taxon').classList.remove('hidden');
                     
                     // Select the CoL species
-                    selectTaxon(colTaxon);
+                    await selectTaxon(colTaxon);
                     
                     // Highlight in list
                     document.querySelectorAll('#genus-species-list .species-item').forEach(el => el.classList.remove('active'));
@@ -1568,6 +1727,17 @@
                 a.click();
                 URL.revokeObjectURL(url);
                 showToast(lang === 'ro' ? 'Descărcat!' : 'Downloaded!', 'success');
+            };
+
+            document.getElementById('btn-download-db').onclick = () => {
+                const blob = new Blob([JSON.stringify(colTaxonomy, null, 4)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'standardized_taxonomy_updated.json';
+                a.click();
+                URL.revokeObjectURL(url);
+                showToast(lang === 'ro' ? 'Baza JSON actualizată a fost descărcată' : 'Updated database JSON downloaded', 'success');
             };
 
             // Language
@@ -2065,6 +2235,7 @@
             
             // Category group
             const categoryDiv = document.getElementById('col-hierarchy');
+            categoryDiv.innerHTML = '';
             if (t.category_group) {
                 categoryDiv.innerHTML = `<div class="text-sm"><strong>Category Group:</strong> ${t.category_group}</div>`;
             }
@@ -2088,15 +2259,29 @@
         function renderBreadcrumb(taxon) {
             const container = document.getElementById('view-breadcrumb');
             container.innerHTML = '';
+
+            const fallbackBreadcrumb = [
+                taxon.c_kingdom,
+                taxon.c_phylum,
+                taxon.c_class,
+                taxon.c_order,
+                taxon.c_family,
+                taxon.c_genus,
+                taxon.c_species || taxon.scientific_name
+            ].filter(Boolean).join(' > ');
+            const breadcrumbText = taxon.breadcrumb || fallbackBreadcrumb;
             
-            if (!taxon.breadcrumb || taxon.is_generic) {
+            if (!breadcrumbText || taxon.is_generic) {
                 container.innerHTML = '<span class="text-slate-500">—</span>';
                 return;
             }
             
-            const parts = taxon.breadcrumb.split(' > ');
+            const links = taxon.breadcrumb_links?.length
+                ? taxon.breadcrumb_links
+                : breadcrumbText.split(' > ').map(name => ({ name, id: null }));
             
-            parts.forEach((part, index) => {
+            links.forEach((linkInfo, index) => {
+                const part = linkInfo.name;
                 const matchingTaxon = colTaxonomy.find(t => 
                     t.scientific_name === part || 
                     t.c_kingdom === part || t.c_phylum === part ||
@@ -2106,10 +2291,11 @@
                 );
                 
                 const span = document.createElement('span');
+                const linkedColId = isUsableCoLId(linkInfo.id) ? linkInfo.id : getUsableCoLId(matchingTaxon);
                 
-                if (matchingTaxon && matchingTaxon.col_internal_id !== taxon.col_internal_id) {
+                if (linkedColId && linkedColId !== taxon.col_internal_id) {
                     const link = document.createElement('a');
-                    link.href = `${COL_BASE_URL}/${COL_DATASET_ID}/taxon/${matchingTaxon.col_internal_id}`;
+                    link.href = buildCoLTaxonUrl(linkedColId);
                     link.target = '_blank';
                     link.className = 'breadcrumb-link';
                     link.textContent = part;
@@ -2121,7 +2307,7 @@
                 
                 container.appendChild(span);
                 
-                if (index < parts.length - 1) {
+                if (index < links.length - 1) {
                     const sep = document.createElement('span');
                     sep.className = 'text-slate-600 mx-0.5';
                     sep.textContent = '›';

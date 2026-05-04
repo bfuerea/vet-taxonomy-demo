@@ -280,6 +280,8 @@
         // ── State ─────────────────────────────────────────────────────────────────
         let colTaxonomy = [];      // CoL taxonomy data
         let taxonomyMap = {};      // Category mappings
+        let userTranslations = {}; // User-added Romanian translations (latin -> romanian)
+        let glossary = {};         // Local glossary (english -> romanian)
         let lang = 'ro';
         let selectedCategory = null;
         let selectedSubcategory = null;
@@ -309,9 +311,11 @@
         async function init() {
             try {
                 showLoading(true);
-                const [colRes, mapRes] = await Promise.all([
+                const [colRes, mapRes, glossaryRes, userTransRes] = await Promise.all([
                     fetch('./data/standardized_taxonomy.json'),
-                    fetch('./data/taxonomy_map.json')
+                    fetch('./data/taxonomy_map.json'),
+                    fetch('./data/taxonomy_glossary.json'),
+                    fetch('./data/user_translations.json')
                 ]);
                 
                 if (!colRes.ok) throw new Error('CoL taxonomy data missing');
@@ -319,6 +323,16 @@
                 
                 colTaxonomy = await colRes.json();
                 taxonomyMap = await mapRes.json();
+                
+                // Load glossary (optional, not critical)
+                if (glossaryRes.ok) {
+                    glossary = await glossaryRes.json();
+                }
+                
+                // Load user translations (optional, starts empty)
+                if (userTransRes.ok) {
+                    userTranslations = await userTransRes.json();
+                }
                 
                 populateCategories();
                 setupEventHandlers();
@@ -373,7 +387,7 @@
             });
         }
 
-        function selectCategory(catKey, btnElement) {
+        async function selectCategory(catKey, btnElement) {
             selectedCategory = catKey;
             selectedSubcategory = null;
             selectedTaxon = null;
@@ -388,14 +402,14 @@
             badge.textContent = `Categorie: ${catKey}`;
             badge.classList.remove('hidden');
             
-            // Show species list directly (skip subcategories for standardized data)
-            showSpeciesForCategory();
-            
             // Show step 3 panel
             document.getElementById('step2-panel').classList.add('hidden');
             document.getElementById('step3-panel').classList.remove('hidden');
             document.getElementById('unified-search-panel').classList.add('hidden');
             document.getElementById('sub-rank-badge').classList.add('hidden');
+            
+            // Show species list directly (skip subcategories for standardized data)
+            await showSpeciesForCategory();
             
             populateSubcategories();
             clearDetails();
@@ -436,7 +450,7 @@
             });
         }
 
-        function selectSubcategory(subKey, btnElement) {
+        async function selectSubcategory(subKey, btnElement) {
             selectedSubcategory = subKey;
             selectedTaxon = null;
             
@@ -452,11 +466,11 @@
                 badge.classList.remove('hidden');
             }
             
-            showSpeciesForCategory();
+            await showSpeciesForCategory();
         }
 
         // ── Species List ──────────────────────────────────────────────────────────
-        function showSpeciesForCategory() {
+        async function showSpeciesForCategory() {
             document.getElementById('step3-panel').classList.remove('hidden');
             
             // Filter standardized taxonomy by category group
@@ -471,7 +485,7 @@
                 return a.scientific_name.localeCompare(b.scientific_name);
             });
             
-            renderSpeciesList(filtered);
+            await renderSpeciesList(filtered);
             
             // Show category info
             const genericContainer = document.getElementById('generic-container');
@@ -486,7 +500,7 @@
             }
         }
 
-        function renderSpeciesList(species, highlightQuery = '') {
+        async function renderSpeciesList(species, highlightQuery = '') {
             const list = document.getElementById('species-list');
             list.innerHTML = '';
             
@@ -501,14 +515,21 @@
                 return;
             }
             
-            species.forEach(taxon => {
+            // Process each species asynchronously
+            for (const taxon of species) {
                 const div = document.createElement('div');
                 div.className = `species-item bg-slate-900/50 border-slate-800 ${selectedTaxon?.col_internal_id === taxon.col_internal_id ? 'active' : ''}`;
                 
                 const name = highlightMatch(taxon.scientific_name, highlightQuery);
-                const vernacular = lang === 'ro' 
-                    ? (taxon.romanian_vernacular !== 'Negăsit' ? taxon.romanian_vernacular : taxon.english_vernacular)
-                    : taxon.english_vernacular;
+                
+                // Get vernacular name based on language
+                let vernacular;
+                if (lang === 'ro') {
+                    const romName = await getRomanianName(taxon);
+                    vernacular = romName || taxon.english_vernacular;
+                } else {
+                    vernacular = taxon.english_vernacular;
+                }
                 
                 // Create status badges
                 let badges = `
@@ -537,7 +558,7 @@
                 
                 div.onclick = () => selectTaxon(taxon);
                 list.appendChild(div);
-            });
+            }
         }
 
         function highlightMatch(text, query) {
@@ -564,7 +585,9 @@
                     return;
                 }
                 
-                searchTimeout = setTimeout(() => filterSpeciesInCategory(query), 150);
+                searchTimeout = setTimeout(async () => {
+                    await filterSpeciesInCategory(query);
+                }, 150);
             });
 
             document.getElementById('clear-species-search').onclick = () => {
@@ -597,21 +620,23 @@
                     return;
                 }
                 
-                searchTimeout = setTimeout(() => performGlobalSearch(query), 200);
+                searchTimeout = setTimeout(async () => {
+                    await performGlobalSearch(query);
+                }, 200);
             });
 
             // Generic selection
-            document.getElementById('btn-generic').onclick = () => {
+            document.getElementById('btn-generic').onclick = async () => {
                 if (activeTaxon) {
-                    selectGenericTaxon();
+                    await selectGenericTaxon();
                 }
             };
 
             // Skip breed button
-            document.getElementById('btn-skip-breed').onclick = () => {
+            document.getElementById('btn-skip-breed').onclick = async () => {
                 selectedBreed = null;
                 document.getElementById('breed-select').value = '';
-                updateDetailsPanel();
+                await updateDetailsPanel();
                 updateExport();
                 showToast(lang === 'ro' ? 'Rasă ignorată (selecție generică)' : 'Breed skipped (generic selection)', 'info');
             };
@@ -634,11 +659,11 @@
             };
 
             // Language
-            document.getElementById('btn-ro').onclick = () => { lang = 'ro'; updateLangUI(); };
-            document.getElementById('btn-en').onclick = () => { lang = 'en'; updateLangUI(); };
+            document.getElementById('btn-ro').onclick = async () => { lang = 'ro'; await updateLangUI(); };
+            document.getElementById('btn-en').onclick = async () => { lang = 'en'; await updateLangUI(); };
         }
 
-        function filterSpeciesInCategory(query) {
+        async function filterSpeciesInCategory(query) {
             const catInfo = taxonomyMap.categories?.[selectedCategory];
             const subInfo = selectedSubcategory ? taxonomyMap.subcategories?.[selectedSubcategory] : null;
             
@@ -665,10 +690,10 @@
                 return searchable.includes(lowerQuery);
             });
             
-            renderSpeciesList(filtered, query);
+            await renderSpeciesList(filtered, query);
         }
 
-        function performGlobalSearch(query) {
+        async function performGlobalSearch(query) {
             const lowerQuery = query.toLowerCase();
             
             const results = colTaxonomy.filter(taxon => {
@@ -685,10 +710,10 @@
                 return searchable.includes(lowerQuery);
             }).slice(0, 20);
             
-            renderGlobalResults(results, query);
+            await renderGlobalResults(results, query);
         }
 
-        function renderGlobalResults(results, highlightQuery) {
+        async function renderGlobalResults(results, highlightQuery) {
             const container = document.getElementById('global-search-results');
             container.innerHTML = '';
             
@@ -701,14 +726,20 @@
                 return;
             }
             
-            results.forEach(taxon => {
+            for (const taxon of results) {
                 const div = document.createElement('div');
                 div.className = `search-result bg-slate-900/50 border-slate-800 ${selectedTaxon?.col_internal_id === taxon.col_internal_id ? 'active' : ''}`;
                 
                 const name = highlightMatch(taxon.scientific_name, highlightQuery);
-                const vernacular = lang === 'ro' 
-                    ? (taxon.romanian_vernacular !== 'Negăsit' ? taxon.romanian_vernacular : taxon.english_vernacular)
-                    : taxon.english_vernacular;
+                
+                // Get vernacular name based on language
+                let vernacular;
+                if (lang === 'ro') {
+                    const romName = await getRomanianName(taxon);
+                    vernacular = romName || taxon.english_vernacular;
+                } else {
+                    vernacular = taxon.english_vernacular;
+                }
                 
                 div.innerHTML = `
                     <div class="flex justify-between items-start">
@@ -729,7 +760,7 @@
                     autoDetectCategory(taxon);
                 };
                 container.appendChild(div);
-            });
+            }
         }
 
         function autoDetectCategory(taxon) {
@@ -757,7 +788,7 @@
         }
 
         // ── Taxon Selection ───────────────────────────────────────────────────────
-        function selectTaxon(taxon) {
+        async function selectTaxon(taxon) {
             selectedTaxon = taxon;
             selectedBreed = null;
             
@@ -772,7 +803,7 @@
                 hideBreedPanel();
             }
             
-            updateDetailsPanel();
+            await updateDetailsPanel();
             updateExport();
         }
 
@@ -796,10 +827,10 @@
             document.getElementById('breed-count').textContent = `${breeds.length} ${lang === 'ro' ? 'rase' : 'breeds'}`;
             
             // Handle selection
-            select.onchange = (e) => {
+            select.onchange = async (e) => {
                 if (e.target.value !== '') {
                     selectedBreed = selectedTaxon.breeds[parseInt(e.target.value)];
-                    updateDetailsPanel();
+                    await updateDetailsPanel();
                     updateExport();
                 }
             };
@@ -810,7 +841,7 @@
             selectedBreed = null;
         }
 
-        function selectGenericTaxon() {
+        async function selectGenericTaxon() {
             selectedTaxon = {
                 is_generic: true,
                 rank: activeTaxon.rank,
@@ -822,7 +853,7 @@
             selectedBreed = null;
             hideBreedPanel();
             
-            updateDetailsPanel();
+            await updateDetailsPanel();
             updateExport();
         }
 
@@ -832,7 +863,7 @@
             document.getElementById('json-preview').textContent = '// ' + (lang === 'ro' ? 'Selectați un taxon' : 'Select a taxon');
         }
 
-        function updateDetailsPanel() {
+        async function updateDetailsPanel() {
             if (!selectedTaxon) return;
             
             const t = selectedTaxon;
@@ -871,9 +902,13 @@
                 link.style.display = 'none';
             }
             
-            // Vernacular names
+            // Vernacular names - use translation fallback for Romanian
             document.getElementById('view-vernacular-en').textContent = t.english_vernacular && t.english_vernacular !== 'Not found' ? t.english_vernacular : '—';
-            document.getElementById('view-vernacular-ro').textContent = t.romanian_vernacular && t.romanian_vernacular !== 'Negăsit' ? t.romanian_vernacular : '—';
+            
+            // Get Romanian name using fallback system
+            const romName = await getRomanianName(t);
+            const romDisplay = romName || (t.romanian_vernacular && t.romanian_vernacular !== 'Negăsit' ? t.romanian_vernacular : null);
+            document.getElementById('view-vernacular-ro').textContent = romDisplay || '—';
             
             // Category group
             const categoryDiv = document.getElementById('col-hierarchy');
@@ -985,7 +1020,7 @@
             document.getElementById('json-preview').textContent = JSON.stringify(exportObj, null, 4);
         }
 
-        function updateLangUI() {
+        async function updateLangUI() {
             // Language buttons
             document.getElementById('btn-ro').className = lang === 'ro' 
                 ? 'px-4 py-1.5 rounded-lg bg-blue-600 text-white text-sm' 
@@ -1013,19 +1048,150 @@
             
             // Refresh species list
             if (selectedCategory) {
-                showSpeciesForCategory();
+                await showSpeciesForCategory();
             }
             
             // Update details if visible
             if (selectedTaxon) {
-                updateDetailsPanel();
+                await updateDetailsPanel();
             }
             
             // Update search results if visible
             const globalQuery = document.getElementById('global-search').value;
             if (globalQuery) {
-                performGlobalSearch(globalQuery);
+                await performGlobalSearch(globalQuery);
             }
+        }
+
+        // ── Romanian Translation Fallback System ────────────────────────────────────
+        
+        // Cache for API results to avoid repeated calls
+        const translationCache = new Map();
+        
+        async function getRomanianName(taxon) {
+            const cacheKey = taxon.scientific_name;
+            if (translationCache.has(cacheKey)) {
+                return translationCache.get(cacheKey);
+            }
+            
+            // 1. Check if already has romanian_vernacular !== 'Negăsit'
+            if (taxon.romanian_vernacular && taxon.romanian_vernacular !== 'Negăsit') {
+                translationCache.set(cacheKey, taxon.romanian_vernacular);
+                return taxon.romanian_vernacular;
+            }
+            
+            // 2. Check user_translations.json (latin name -> romanian)
+            if (userTranslations[taxon.scientific_name]) {
+                translationCache.set(cacheKey, userTranslations[taxon.scientific_name]);
+                return userTranslations[taxon.scientific_name];
+            }
+            
+            // 3. Check glossary (exact match on english_vernacular)
+            if (taxon.english_vernacular && glossary[taxon.english_vernacular]) {
+                const romName = glossary[taxon.english_vernacular];
+                translationCache.set(cacheKey, romName);
+                return romName;
+            }
+            
+            // 4. Fetch from CoL API (priority: CoL first)
+            const colName = await fetchCoLVernacular(taxon.col_internal_id);
+            if (colName) {
+                translationCache.set(cacheKey, colName);
+                return colName;
+            }
+            
+            // 5. Fetch from GBIF API
+            const gbifName = await fetchGBIFVernacular(taxon.scientific_name);
+            if (gbifName) {
+                translationCache.set(cacheKey, gbifName);
+                return gbifName;
+            }
+            
+            // 6. Return null to trigger user input prompt
+            translationCache.set(cacheKey, null);
+            return null;
+        }
+        
+        async function fetchCoLVernacular(colId) {
+            if (!colId) return null;
+            
+            try {
+                const response = await fetch(`https://api.checklistbank.org/dataset/3LR/nameusage/${colId}`);
+                if (!response.ok) return null;
+                
+                const data = await response.json();
+                
+                // Look for Romanian vernacular name
+                if (data.vernacularNames && Array.isArray(data.vernacularNames)) {
+                    const romName = data.vernacularNames.find(vn => 
+                        vn.language === 'ron' || vn.language === 'ro' || vn.language === 'rom'
+                    );
+                    if (romName && romName.name) {
+                        return romName.name;
+                    }
+                }
+                
+                return null;
+            } catch (e) {
+                console.error('CoL API error:', e);
+                return null;
+            }
+        }
+        
+        async function fetchGBIFVernacular(scientificName) {
+            if (!scientificName) return null;
+            
+            try {
+                // First, match the species name to get usageKey
+                const matchResponse = await fetch(`https://api.gbif.org/v1/species/match?name=${encodeURIComponent(scientificName)}&verbose=true`);
+                if (!matchResponse.ok) return null;
+                
+                const matchData = await matchResponse.json();
+                if (!matchData.usageKey) return null;
+                
+                // Then fetch vernacular names
+                const vernResponse = await fetch(`https://api.gbif.org/v1/species/${matchData.usageKey}/vernacularNames`);
+                if (!vernResponse.ok) return null;
+                
+                const vernData = await vernResponse.json();
+                
+                if (vernData.results && Array.isArray(vernData.results)) {
+                    const romName = vernData.results.find(vn => 
+                        vn.language === 'ron' || vn.language === 'ro' || vn.language === 'rom' || 
+                        (vn.language && vn.language.toLowerCase().includes('romanian'))
+                    );
+                    if (romName && romName.vernacularName) {
+                        return romName.vernacularName;
+                    }
+                }
+                
+                return null;
+            } catch (e) {
+                console.error('GBIF API error:', e);
+                return null;
+            }
+        }
+        
+        function saveUserTranslation(latinName, romanianName) {
+            userTranslations[latinName] = romanianName;
+            translationCache.set(latinName, romanianName);
+            
+            // Save to localStorage as backup
+            localStorage.setItem('userTranslations', JSON.stringify(userTranslations));
+            
+            showToast(`Traducere salvată: ${romanianName}`, 'success');
+        }
+        
+        function exportUserTranslations() {
+            const dataStr = JSON.stringify(userTranslations, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'user_translations.json';
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('Fișier user_translations.json descărcat', 'success');
         }
 
         // ── Start ─────────────────────────────────────────────────────────────────

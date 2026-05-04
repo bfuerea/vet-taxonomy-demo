@@ -209,6 +209,28 @@
                         <p class="text-xs text-slate-500" data-lang-ro="Se încarcă..." data-lang-en="Loading...">Se încarcă...</p>
                     </div>
                     
+                    <!-- CoL Species Search -->
+                    <div id="genus-species-search-container" class="hidden mb-3 relative">
+                        <input 
+                            type="text" 
+                            id="genus-species-search" 
+                            placeholder="Caută speciile încărcate din CoL..."
+                            data-lang-ro="Caută speciile încărcate din CoL..."
+                            data-lang-en="Search loaded CoL species..."
+                            data-placeholder-ro="Caută speciile încărcate din CoL..."
+                            data-placeholder-en="Search loaded CoL species..."
+                            class="w-full bg-slate-900 border border-slate-700 rounded-xl py-2.5 pl-10 pr-10 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors"
+                        >
+                        <svg class="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                        <button id="clear-genus-species-search" class="hidden absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-500 hover:text-white" title="Clear search">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    
                     <!-- CoL Species Results -->
                     <div id="genus-species-list" class="space-y-2 custom-scrollbar flex-grow overflow-y-auto hidden"></div>
                 </section>
@@ -390,6 +412,8 @@
         let searchTimeout = null;
         let browseMode = 'local';  // 'local' | 'col' - which mode species list is showing
         let currentBrowseGenus = null; // Which genus was last browsed
+        let currentGenusBrowseResults = [];
+        let currentGenusBrowseStats = { localCount: 0, apiCount: 0 };
         
         // Cache for browse results (genus -> species list)
         const browseCache = new Map();
@@ -798,30 +822,160 @@
         }
 
         // ── CoL API helpers ──────────────────────────────────────────────────────
+        function cleanBrowseValue(value) {
+            const text = String(value || '').trim();
+            return text && text !== 'Not found' && text !== 'Negăsit' ? text : '';
+        }
+
+        function normalizeBrowseKey(value) {
+            return String(value || '').replace(/\s+/g, ' ').trim().toLowerCase();
+        }
+
+        function getFetchColSpeciesOptions(limitOrOptions = 50) {
+            if (typeof limitOrOptions === 'number') {
+                return {
+                    pageSize: Math.max(1, limitOrOptions),
+                    maxResults: Math.max(1, limitOrOptions)
+                };
+            }
+
+            const pageSize = Math.max(1, limitOrOptions.pageSize || 100);
+            const maxResults = Math.max(1, limitOrOptions.maxResults || pageSize);
+            return { pageSize, maxResults };
+        }
+
+        function getCoLUsageScientificName(usage) {
+            return cleanBrowseValue(
+                usage?.name?.scientificName ||
+                usage?.scientificName ||
+                usage?.usage?.name?.scientificName ||
+                usage?.usage?.scientificName
+            );
+        }
+
+        function getCoLUsageAuthorship(usage) {
+            return cleanBrowseValue(
+                usage?.name?.authorship ||
+                usage?.authorship ||
+                usage?.usage?.name?.authorship ||
+                usage?.usage?.authorship
+            );
+        }
+
+        function getCoLUsageId(usage) {
+            return usage?.id || usage?.usageId || usage?.key || usage?.usage?.id || null;
+        }
+
+        function getVernacularFromUsage(usage, languages) {
+            const names = [
+                ...(usage?.name?.vernacularNames || []),
+                ...(usage?.vernacularNames || []),
+                ...(usage?.usage?.vernacularNames || [])
+            ];
+            const match = names.find(v => languages.includes(String(v.language || '').toLowerCase()));
+            return cleanBrowseValue(match?.name || match?.vernacularName);
+        }
+
+        function normalizeCoLUsage(usage) {
+            return {
+                scientificName: getCoLUsageScientificName(usage),
+                authorship: getCoLUsageAuthorship(usage),
+                id: getCoLUsageId(usage),
+                englishName: getVernacularFromUsage(usage, ['en', 'eng']),
+                romanianName: getVernacularFromUsage(usage, ['ro', 'ron', 'rom']),
+                source: 'col'
+            };
+        }
+
+        function normalizeBrowseSpecies(taxon, source = null) {
+            const colId = taxon?.id || taxon?.usageId || taxon?.col_id ||
+                (isUsableCoLId(taxon?.col_internal_id) ? taxon.col_internal_id : null);
+
+            return {
+                scientificName: cleanBrowseValue(taxon?.scientificName || taxon?.scientific_name),
+                authorship: cleanBrowseValue(taxon?.authorship),
+                id: colId,
+                gbifKey: taxon?.gbifKey || null,
+                englishName: cleanBrowseValue(taxon?.englishName || taxon?.english_vernacular),
+                romanianName: cleanBrowseValue(taxon?.romanianName || taxon?.romanian_vernacular),
+                source: source || taxon?.source || 'api',
+                originalTaxon: taxon?.originalTaxon || taxon
+            };
+        }
+
+        function isSpeciesInGenus(taxon, genus) {
+            const scientificName = taxon?.scientificName || taxon?.scientific_name || '';
+            return normalizeBrowseKey(scientificName).startsWith(`${normalizeBrowseKey(genus)} `);
+        }
+
+        function sortBrowseSpecies(species) {
+            return [...species].sort((a, b) => {
+                const aHasEnglish = cleanBrowseValue(a.englishName) ? 1 : 0;
+                const bHasEnglish = cleanBrowseValue(b.englishName) ? 1 : 0;
+                if (aHasEnglish !== bHasEnglish) return bHasEnglish - aHasEnglish;
+                return normalizeBrowseKey(a.scientificName).localeCompare(normalizeBrowseKey(b.scientificName));
+            });
+        }
+
+        function dedupeBrowseSpecies(species) {
+            const byId = new Map();
+            const noId = [];
+
+            const pickBetter = (existing, candidate) => {
+                if (!existing) return candidate;
+                if (existing.source !== 'local' && candidate.source === 'local') return candidate;
+                if (!existing.englishName && candidate.englishName) return candidate;
+                if (!existing.id && candidate.id) return candidate;
+                return existing;
+            };
+
+            species.forEach(taxon => {
+                const normalized = normalizeBrowseSpecies(taxon, taxon.source);
+                if (!normalized.scientificName) return;
+                const idKey = normalized.id ? String(normalized.id) : null;
+
+                if (idKey) byId.set(idKey, pickBetter(byId.get(idKey), normalized));
+                else noId.push(normalized);
+            });
+
+            const byName = new Map();
+            [...byId.values(), ...noId].forEach(taxon => {
+                const key = normalizeBrowseKey(taxon.scientificName);
+                byName.set(key, pickBetter(byName.get(key), taxon));
+            });
+
+            return sortBrowseSpecies([...byName.values()]);
+        }
+
+        function getEnglishCoverage(species) {
+            return species.filter(taxon => cleanBrowseValue(taxon.englishName)).length;
+        }
+
         // Tries ChecklistBank (CoL v2, CORS-enabled) first,
         // then falls back to GBIF species search. Returns results with vernacular data.
-        async function fetchColSpeciesForGenus(genus, limit = 50) {
+        async function fetchColSpeciesForGenus(genus, limitOrOptions = 50) {
+            const { pageSize, maxResults } = getFetchColSpeciesOptions(limitOrOptions);
+
             // Strategy 1: CoL v2 public REST API (CORS-friendly)
             try {
-                // ChecklistBank API (the successor to api.catalogue.life, CORS-friendly)
-                const url = `https://api.checklistbank.org/dataset/3LR/nameusage/search?q=${encodeURIComponent(genus)}&rank=species&limit=${limit}&offset=0`;
-                const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
-                if (res.ok) {
+                const collected = [];
+                for (let offset = 0; offset < maxResults; offset += pageSize) {
+                    const limit = Math.min(pageSize, maxResults - offset);
+                    const url = `https://api.checklistbank.org/dataset/3LR/nameusage/search?q=${encodeURIComponent(genus)}&rank=species&limit=${limit}&offset=${offset}`;
+                    const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+                    if (!res.ok) break;
+
                     const data = await res.json();
                     const results = (data.result || data.results || []);
-                    const filtered = results.filter(r => {
-                        const sn = r.name?.scientificName || r.scientificName || '';
-                        return sn.toLowerCase().startsWith(genus.toLowerCase());
-                    }).map(r => ({
-                        scientificName: r.name?.scientificName || r.scientificName || '',
-                        authorship: r.name?.authorship || r.authorship || '',
-                        id: r.id || r.usageId || null,
-                        englishName: (r.name?.vernacularNames || []).find(v => v.language === 'en')?.name || '',
-                        romanianName: (r.name?.vernacularNames || []).find(v => v.language === 'ro')?.name || '',
-                        source: 'col'
-                    })).filter(r => r.scientificName);
-                    if (filtered.length > 0) return filtered;
+                    collected.push(...results);
+                    if (results.length < limit) break;
                 }
+
+                const filtered = collected
+                    .map(normalizeCoLUsage)
+                    .filter(taxon => taxon.scientificName && isSpeciesInGenus(taxon, genus));
+
+                if (filtered.length > 0) return dedupeBrowseSpecies(filtered);
             } catch (e) {
                 console.warn('ChecklistBank API unavailable, trying GBIF...', e.message);
             }
@@ -835,12 +989,12 @@
                 const genusKey = data.results?.[0]?.key;
                 if (!genusKey) throw new Error('Genus not found in GBIF');
 
-                const spUrl = `https://api.gbif.org/v1/species/${genusKey}/children?limit=${limit}`;
+                const spUrl = `https://api.gbif.org/v1/species/${genusKey}/children?limit=${maxResults}`;
                 const spRes = await fetch(spUrl);
                 if (!spRes.ok) throw new Error('GBIF children lookup failed');
                 const spData = await spRes.json();
 
-                return (spData.results || [])
+                return dedupeBrowseSpecies((spData.results || [])
                     .filter(r => r.rank === 'SPECIES')
                     .map(r => ({
                         scientificName: r.species || r.scientificName || '',
@@ -850,7 +1004,8 @@
                         englishName: r.vernacularName || '',
                         romanianName: '',
                         source: 'gbif'
-                    })).filter(r => r.scientificName);
+                    }))
+                    .filter(r => r.scientificName && isSpeciesInGenus(r, genus)));
             } catch (e) {
                 console.error('GBIF fallback error:', e.message);
                 throw new Error(lang === 'ro'
@@ -859,30 +1014,93 @@
             }
         }
 
+        function clearGenusBrowseSearch({ hide = false } = {}) {
+            const container = document.getElementById('genus-species-search-container');
+            const input = document.getElementById('genus-species-search');
+            const clearBtn = document.getElementById('clear-genus-species-search');
+
+            if (input) input.value = '';
+            if (clearBtn) clearBtn.classList.add('hidden');
+            if (container) {
+                container.classList.toggle('hidden', hide || currentGenusBrowseResults.length === 0);
+            }
+        }
+
+        function resetGenusBrowseState() {
+            currentGenusBrowseResults = [];
+            currentGenusBrowseStats = { localCount: 0, apiCount: 0 };
+            clearGenusBrowseSearch({ hide: true });
+        }
+
+        function getGenusBrowseSearchQuery() {
+            return document.getElementById('genus-species-search')?.value.trim() || '';
+        }
+
+        function speciesMatchesGenusBrowseSearch(taxon, query) {
+            if (!query) return true;
+            const needle = normalizeBrowseKey(query);
+            const fields = [
+                taxon.scientificName,
+                taxon.authorship,
+                taxon.englishName,
+                taxon.romanianName,
+                taxon.source,
+                taxon.id,
+                taxon.gbifKey
+            ].join(' ');
+            return normalizeBrowseKey(fields).includes(needle);
+        }
+
+        function renderCurrentGenusBrowseResults() {
+            const query = getGenusBrowseSearchQuery();
+            const clearBtn = document.getElementById('clear-genus-species-search');
+            if (clearBtn) clearBtn.classList.toggle('hidden', !query);
+
+            const filtered = currentGenusBrowseResults.filter(taxon => speciesMatchesGenusBrowseSearch(taxon, query));
+            renderGenusSpeciesList(filtered, {
+                totalCount: currentGenusBrowseResults.length,
+                query,
+                englishCoverage: getEnglishCoverage(currentGenusBrowseResults),
+                stats: currentGenusBrowseStats
+            });
+        }
+
+        function setGenusBrowseResults(species, stats = currentGenusBrowseStats) {
+            currentGenusBrowseResults = dedupeBrowseSpecies(species);
+            currentGenusBrowseStats = stats;
+
+            const container = document.getElementById('genus-species-search-container');
+            if (container) container.classList.toggle('hidden', currentGenusBrowseResults.length === 0);
+
+            renderCurrentGenusBrowseResults();
+        }
+
         // ── Step 4: CoL Genus Browse ─────────────────────────────────────────────
         async function browseCoLForGenus(genusName) {
             const loadingDiv = document.getElementById('genus-browse-loading');
             const resultsDiv = document.getElementById('genus-species-list');
             const btn = document.getElementById('btn-browse-col-genus');
             
+            resetGenusBrowseState();
             loadingDiv.classList.remove('hidden');
             resultsDiv.classList.add('hidden');
             btn.classList.add('hidden');
             
             try {
                 const genus = genusName.split(' ')[0];
-                const cacheKey = `genus_${genus.toLowerCase()}`;
+                const cacheKey = `genus_${genus.toLowerCase()}_300`;
                 
                 // First: show local species (from standardized taxonomy)
                 let localSpecies = colTaxonomy.filter(taxon => {
                     const gen = taxon.scientific_name?.split(' ')[0] || '';
-                    return gen.toLowerCase() === genus.toLowerCase();
-                });
+                    const isSpecies = taxon.rank === 'species' || taxon.scientific_name?.includes(' ');
+                    return gen.toLowerCase() === genus.toLowerCase() && isSpecies;
+                }).map(taxon => normalizeBrowseSpecies(taxon, 'local'));
                 
                 // Render local results first
                 if (localSpecies.length > 0) {
                     updateAPIStatusBadge(localSpecies.length, 0, false);
-                    await renderGenusSpeciesListWithSource(localSpecies, 'local');
+                    setGenusBrowseResults(localSpecies, { localCount: localSpecies.length, apiCount: 0 });
                     resultsDiv.classList.remove('hidden');
                     loadingDiv.classList.add('hidden');
                 } else {
@@ -897,7 +1115,7 @@
                     apiSpecies = browseCache.get(cacheKey);
                 } else {
                     try {
-                        apiSpecies = await fetchColSpeciesForGenus(genus, 50);
+                        apiSpecies = await fetchColSpeciesForGenus(genus, { pageSize: 100, maxResults: 300 });
                         browseCache.set(cacheKey, apiSpecies);
                     } catch (e) {
                         console.error('API fetch error:', e);
@@ -916,12 +1134,12 @@
                 
                 // Render all results (local + API)
                 const allSpecies = [
-                    ...localSpecies.map(s => ({ ...s, source: 'local' })),
-                    ...apiSpecies.map(s => ({ ...s, source: 'api' }))
+                    ...localSpecies,
+                    ...apiSpecies.map(s => normalizeBrowseSpecies(s, s.source || 'api'))
                 ];
                 
                 updateAPIStatusBadge(localSpecies.length, apiSpecies.length, false);
-                await renderGenusSpeciesListWithSource(allSpecies, 'mixed');
+                setGenusBrowseResults(allSpecies, { localCount: localSpecies.length, apiCount: apiSpecies.length });
                 
                 if (allSpecies.length > 0) {
                     resultsDiv.classList.remove('hidden');
@@ -945,25 +1163,45 @@
             }
         }
         
-        function renderGenusSpeciesList(species) {
+        function renderGenusSpeciesList(species, options = {}) {
             const list = document.getElementById('genus-species-list');
             list.innerHTML = '';
             list.classList.remove('hidden');
-            
-            if (species.length === 0) {
-                list.innerHTML = `
-                    <div class="text-center text-slate-500 py-4">
-                        <p class="text-sm">${lang === 'ro' ? 'Nicio specie găsită' : 'No species found'}</p>
-                    </div>
+
+            const totalCount = options.totalCount ?? species.length;
+            const query = options.query || '';
+            const englishCoverage = options.englishCoverage ?? getEnglishCoverage(species);
+
+            if (totalCount > 0) {
+                const headerDiv = document.createElement('div');
+                headerDiv.className = 'px-2 py-1 text-[10px] font-bold text-slate-400 uppercase mb-2 flex flex-wrap gap-x-3 gap-y-1';
+                
+                const countText = query
+                    ? `${species.length}/${totalCount} ${lang === 'ro' ? 'specii' : 'species'}`
+                    : `${totalCount} ${lang === 'ro' ? 'specii găsite' : 'species found'}`;
+                const englishText = `${englishCoverage} ${lang === 'ro' ? 'cu nume EN' : 'with EN names'}`;
+                const sourceText = options.stats
+                    ? `${options.stats.apiCount || 0} CoL API + ${options.stats.localCount || 0} local`
+                    : '';
+
+                headerDiv.innerHTML = `
+                    <span>${countText}</span>
+                    <span>${englishText}</span>
+                    ${sourceText ? `<span>${sourceText}</span>` : ''}
                 `;
+                list.appendChild(headerDiv);
+            }
+
+            if (species.length === 0) {
+                const message = totalCount > 0 && query
+                    ? (lang === 'ro' ? 'Nicio potrivire în lista încărcată' : 'No matches in loaded list')
+                    : (lang === 'ro' ? 'Nicio specie găsită' : 'No species found');
+                const emptyDiv = document.createElement('div');
+                emptyDiv.className = 'text-center text-slate-500 py-4';
+                emptyDiv.innerHTML = `<p class="text-sm">${message}</p>`;
+                list.appendChild(emptyDiv);
                 return;
             }
-            
-            // Add results header
-            const headerDiv = document.createElement('div');
-            headerDiv.className = 'px-2 py-1 text-[10px] font-bold text-slate-400 uppercase mb-2';
-            headerDiv.textContent = `${species.length} ${lang === 'ro' ? 'specii găsite' : 'species found'}`;
-            list.appendChild(headerDiv);
             
             // Render each species
             species.forEach((taxon) => {
@@ -1008,10 +1246,12 @@
                 
                 // Click to select this CoL species
                 div.onclick = (e) => {
-                    if (e.target.tagName === 'A') return; // Don't select if clicking link
+                    if (e.target.closest('a')) return; // Don't select if clicking link
                     
                     // Create a taxon object for this CoL species
-                    const colTaxon = {
+                    const colTaxon = taxon.source === 'local' && taxon.originalTaxon?.scientific_name
+                        ? { ...taxon.originalTaxon }
+                        : {
                         scientific_name: taxon.scientificName,
                         rank: 'species',
                         col_internal_id: colId,
@@ -1039,7 +1279,10 @@
 
         // ── Render Species List with Source Indicator ──────────────────────────────
         async function renderGenusSpeciesListWithSource(species, mode = 'mixed') {
-            await renderGenusSpeciesList(species);
+            setGenusBrowseResults(species, {
+                localCount: species.filter(taxon => taxon.source === 'local').length,
+                apiCount: species.filter(taxon => taxon.source !== 'local').length
+            });
         }
 
         // ── CoL Browse Functionality ─────────────────────────────────────────────
@@ -1290,6 +1533,17 @@
                 }
             };
 
+            const genusSpeciesSearch = document.getElementById('genus-species-search');
+            genusSpeciesSearch.addEventListener('input', () => {
+                renderCurrentGenusBrowseResults();
+            });
+
+            document.getElementById('clear-genus-species-search').onclick = () => {
+                clearGenusBrowseSearch();
+                renderCurrentGenusBrowseResults();
+                genusSpeciesSearch.focus();
+            };
+
             // Skip breed button
             document.getElementById('btn-skip-breed').onclick = async () => {
                 selectedBreed = null;
@@ -1485,6 +1739,7 @@
             // Hide step 2 panel, show step 3 browse panel
             document.getElementById('step2-panel-taxon').classList.add('hidden');
             document.getElementById('step3-browse-panel').classList.remove('hidden');
+            resetGenusBrowseState();
             
             // Populate browse panel info
             document.getElementById('browse-taxon-name').textContent = taxon.scientific_name;
@@ -1492,12 +1747,15 @@
                 `${taxon.rank || 'Genus'} — ${lang === 'ro' ? 'Apasă butonul pentru a vedea speciile din CoL' : 'Click button to see CoL species'}`;
             
             // Hide results initially
+            document.getElementById('btn-browse-col-genus').classList.remove('hidden');
+            document.getElementById('genus-browse-loading').classList.add('hidden');
             document.getElementById('genus-species-list').classList.add('hidden');
             document.getElementById('genus-species-list').innerHTML = '';
         }
         
         function hideBrowsePanel() {
             document.getElementById('step3-browse-panel').classList.add('hidden');
+            resetGenusBrowseState();
             selectedBrowseTaxon = null;
         }
         

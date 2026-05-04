@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GBIF Species Explorer</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        .search-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            flex-grow: 1;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover { background-color: #004494; }
+        .result-card {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .species-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #2c3e50;
+            font-style: italic;
+        }
+        .common-name {
+            color: #666;
+            margin-left: 10px;
+            font-weight: normal;
+            font-style: normal;
+        }
+        .taxonomy {
+            font-size: 0.9rem;
+            color: #555;
+            margin-top: 5px;
+        }
+        #loading { display: none; color: #666; }
+        .error { color: #dc3545; }
+    </style>
+</head>
+<body>
+
+    <h1>GBIF Species Search</h1>
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Search for a species (e.g., Canis lupus)..." value="Canis lupus">
+        <button id="searchBtn" onclick="performSearch()">Search</button>
+    </div>
+
+    <div id="loading">Querying GBIF database...</div>
+    <div id="error" class="error"></div>
+    <div id="results"></div>
+
+    <script>
+        async function performSearch() {
+            const query = document.getElementById('searchInput').value.trim();
+            const resultsDiv = document.getElementById('results');
+            const loadingDiv = document.getElementById('loading');
+            const errorDiv = document.getElementById('error');
+
+            if (!query) return;
+
+            // Reset UI
+            resultsDiv.innerHTML = '';
+            errorDiv.innerHTML = '';
+            loadingDiv.style.display = 'block';
+
+            // GBIF API: Full-text search filtered to the 'SPECIES' rank
+            const apiUrl = `https://api.gbif.org/v1/species/search?q=${encodeURIComponent(query)}&rank=SPECIES&limit=20`;
+
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+                const data = await response.json();
+
+                if (data.results.length === 0) {
+                    resultsDiv.innerHTML = '<p>No species found matching that query.</p>';
+                } else {
+                    data.results.forEach(species => {
+                        // Extracting key taxonomic data
+                        const sciName = species.scientificName || 'Unknown Scientific Name';
+                        const commonName = species.vernacularName ? `(${species.vernacularName})` : '';
+                        const taxonomy = `Kingdom: ${species.kingdom || 'N/A'} > Phylum: ${species.phylum || 'N/A'} > Class: ${species.class || 'N/A'}`;
+                        const status = species.taxonomicStatus || 'UNKNOWN STATUS';
+
+                        // Building the DOM element
+                        const card = document.createElement('div');
+                        card.className = 'result-card';
+                        card.innerHTML = `
+                            <div class="species-name">${sciName} <span class="common-name">${commonName}</span></div>
+                            <div class="taxonomy">${taxonomy}</div>
+                            <div class="taxonomy">Status: <strong>${status}</strong> | GBIF Key: ${species.key}</div>
+                        `;
+                        resultsDiv.appendChild(card);
+                    });
+                }
+            } catch (error) {
+                errorDiv.innerHTML = `Failed to fetch data: ${error.message}`;
+            } finally {
+                loadingDiv.style.display = 'none';
+            }
+        }
+
+        // Allow pressing "Enter" to search
+        document.getElementById('searchInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') performSearch();
+        });
+    </script>
+</body>
+</html>

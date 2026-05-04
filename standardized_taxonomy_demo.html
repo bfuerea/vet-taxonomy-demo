@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Standardized Taxonomy Dashboard - Domestic Species & Breed Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Outfit', sans-serif; background-color: #0f172a; color: #f8fafc; }
+        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        .animate-fade-in { animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .loading-spinner { animation: spin 1s linear infinite; }
+        .focus-visible:focus { outline: 2px solid #3b82f6; outline-offset: 2px; }
+        .toast { animation: slideIn 0.3s ease-out; }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .highlight { background-color: rgba(59, 130, 246, 0.3); border-radius: 2px; font-weight: 600; }
+        .badge { padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.05em; }
+        .badge-rank { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+        .breadcrumb-link { color: #60a5fa; cursor: pointer; transition: all 0.2s; text-decoration: none; }
+        .breadcrumb-link:hover { color: #93c5fd; text-decoration: underline; }
+        .search-result { padding: 16px; border-radius: 16px; border: 1px solid; text-align: left; transition: all 0.2s; cursor: pointer; }
+        .search-result:hover { background-color: rgba(30, 41, 59, 0.8); border-color: #475569; }
+        .search-result.active { background-color: rgba(37, 99, 235, 0.2); border-color: #3b82f6; }
+        .category-btn { padding: 12px 20px; border-radius: 12px; font-size: 11px; font-weight: bold; text-transform: uppercase; transition: all 0.2s; cursor: pointer; border: 1px solid; }
+        .category-btn:hover { transform: translateY(-2px); }
+        .category-btn.active { background: #2563eb; border-color: #3b82f6; color: white; }
+        .category-btn:not(.active) { background: rgba(30, 41, 59, 0.5); border-color: #334155; color: #94a3b8; }
+        .category-btn:not(.active):hover { background: rgba(51, 65, 85, 0.8); border-color: #475569; color: #e2e8f0; }
+        .subcategory-btn { padding: 10px 16px; border-radius: 10px; font-size: 10px; font-weight: bold; text-transform: uppercase; transition: all 0.2s; cursor: pointer; border: 1px solid; }
+        .subcategory-btn:hover { transform: translateY(-1px); }
+        .subcategory-btn.active { background: rgba(37, 99, 235, 0.2); border-color: #3b82f6; color: #60a5fa; }
+        .subcategory-btn:not(.active) { background: rgba(30, 41, 59, 0.5); border-color: #334155; color: #64748b; }
+        .subcategory-btn:not(.active):hover { background: rgba(51, 65, 85, 0.6); border-color: #475569; color: #cbd5e1; }
+        .species-item { padding: 14px 16px; border-radius: 12px; border: 1px solid; transition: all 0.2s; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .species-item:hover { background-color: rgba(30, 41, 59, 0.8); border-color: #475569; }
+        .species-item.active { background-color: rgba(37, 99, 235, 0.15); border-color: #3b82f6; }
+        #species-list { max-height: 350px; overflow-y: auto; }
+        .step-label { font-size: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.1em; color: #64748b; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .step-section { transition: all 0.3s ease; }
+        .step-section.hidden { display: none; }
+        .rank-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 6px; font-size: 9px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.05em; background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+    </style>
+</head>
+<body class="min-h-screen p-4 lg:p-8">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-blue-600 text-white px-4 py-2 rounded-md">Skip to main content</a>
+    
+    <div class="max-w-7xl mx-auto space-y-6">
+        
+        <header class="flex justify-between items-center bg-slate-900/50 p-6 rounded-3xl border border-slate-800" role="banner">
+            <div>
+                <h1 class="text-2xl font-bold text-white">Standardized Taxonomy</h1>
+                <p class="text-slate-500 text-sm">Domestic Species & Breed Management System</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="flex bg-slate-800 rounded-xl p-1 border border-slate-700" role="group" aria-label="Language selection">
+                    <button id="btn-ro" class="px-4 py-1.5 rounded-lg bg-blue-600 text-white text-sm focus-visible" aria-pressed="true" aria-label="Română">RO</button>
+                    <button id="btn-en" class="px-4 py-1.5 rounded-lg text-slate-400 text-sm focus-visible" aria-pressed="false" aria-label="English">EN</button>
+                </div>
+                <div class="text-[10px] font-mono text-slate-500" role="status" aria-live="polite">CoL: <span id="db-status" class="text-emerald-400">3LR</span></div>
+            </div>
+        </header>
+
+        <main id="main-content" class="grid grid-cols-1 lg:grid-cols-12 gap-6 h-[calc(100vh-180px)]" role="main">
+            
+            <!-- Left Panel: Step-by-Step Selection -->
+            <div class="lg:col-span-7 flex flex-col gap-4 overflow-hidden">
+                
+                <!-- Step 1: Category Selection -->
+                <section id="step1-panel" class="glass p-5 rounded-3xl step-section">
+                    <div class="step-label">
+                        <span data-lang-ro="Pasul 1: Categorie Principală" data-lang-en="Step 1: Main Category">Pasul 1: Categorie Principală</span>
+                        <span id="cat-rank-badge" class="rank-badge hidden"></span>
+                    </div>
+                    <div id="category-grid" class="flex flex-wrap gap-2">
+                        <!-- Categories populated by JS -->
+                    </div>
+                </section>
+
+                <!-- Step 2: Subcategory Selection -->
+                <section id="step2-panel" class="glass p-5 rounded-3xl step-section hidden animate-fade-in">
+                    <div class="step-label">
+                        <span data-lang-ro="Pasul 2: Grupa Generică" data-lang-en="Step 2: Generic Group">Pasul 2: Grupa Generică</span>
+                        <span id="sub-rank-badge" class="rank-badge hidden"></span>
+                    </div>
+                    <div id="subcategory-grid" class="flex flex-wrap gap-2">
+                        <!-- Subcategories populated by JS -->
+                    </div>
+                </section>
+
+                <!-- Step 3: Species Search & List -->
+                <section id="step3-panel" class="glass p-5 rounded-3xl flex-grow flex flex-col min-h-0 step-section hidden animate-fade-in">
+                    <div class="step-label">
+                        <span data-lang-ro="Pasul 3: Specii / Genuri" data-lang-en="Step 3: Species / Genera">Pasul 3: Specii / Genuri</span>
+                        <span id="species-count" class="text-[10px] text-slate-500 font-mono"></span>
+                    </div>
+                    
+                    <!-- Search within category -->
+                    <div class="relative mb-3">
+                        <input 
+                            type="text" 
+                            id="species-search" 
+                            placeholder="Filtrează în această categorie..."
+                            data-placeholder-ro="Filtrează în această categorie..."
+                            data-placeholder-en="Filter within this category..."
+                            class="w-full bg-slate-900 border border-slate-700 rounded-xl px-10 py-3 text-sm text-white outline-none focus:ring-2 focus:ring-blue-500 focus-visible" 
+                            autocomplete="off"
+                        >
+                        <svg class="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                        <button id="clear-species-search" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-500 hover:text-white hidden">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Quick Search All -->
+                    <div class="flex items-center gap-2 mb-3 pb-3 border-b border-slate-800">
+                        <span class="text-[10px] text-slate-500">Sau</span>
+                        <button id="btn-unified-search" class="text-[10px] text-blue-400 hover:text-blue-300 underline">
+                            <span data-lang-ro="căutare în tot catalogul CoL" data-lang-en="search entire CoL catalog">căutare în tot catalogul CoL</span>
+                        </button>
+                    </div>
+
+                    <!-- Generic Selection Button -->
+                    <div id="generic-container" class="hidden mb-3">
+                        <button id="btn-generic" class="w-full py-3 px-4 rounded-xl border-2 border-dashed border-blue-500/30 bg-blue-600/5 hover:bg-blue-600/10 transition-all text-blue-400 font-bold text-xs flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span id="generic-label"></span>
+                        </button>
+                    </div>
+
+                    <!-- Species List -->
+                    <div id="species-list" class="space-y-2 custom-scrollbar flex-grow overflow-y-auto"></div>
+                </section>
+
+                <!-- Step 4: Breed Selection -->
+                <section id="breed-panel" class="glass p-5 rounded-3xl space-y-3 hidden animate-fade-in">
+                    <div class="step-label">
+                        <span data-lang-ro="Pasul 4: Rasă Specifică" data-lang-en="Step 4: Specific Breed">Pasul 4: Rasă Specifică</span>
+                        <span id="breed-count" class="text-[10px] text-slate-500 font-mono"></span>
+                    </div>
+                    <div class="relative">
+                        <select id="breed-select" class="w-full bg-slate-900 border border-amber-900/30 rounded-xl px-4 py-3 text-sm text-white focus:ring-2 focus:ring-amber-500 outline-none cursor-pointer focus-visible">
+                            <option value="" disabled selected data-lang-ro="-- Alege Rasa --" data-lang-en="-- Choose Breed --">-- Alege Rasa --</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button id="btn-skip-breed" class="text-[10px] text-slate-500 hover:text-slate-300 underline">
+                            <span data-lang-ro="Sari peste rasă (genric)" data-lang-en="Skip breed (generic)">Sari peste rasă (generic)</span>
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Unified Search Modal (hidden by default) -->
+                <section id="unified-search-panel" class="glass p-5 rounded-3xl flex-grow flex flex-col min-h-0 step-section hidden animate-fade-in">
+                    <div class="step-label">
+                        <span data-lang-ro="Căutare Globală CoL" data-lang-en="Global CoL Search">Căutare Globală CoL</span>
+                        <button id="btn-back-to-categories" class="text-[10px] text-blue-400 hover:text-blue-300">← <span data-lang-ro="înapoi la categorii" data-lang-en="back to categories">înapoi la categorii</span></button>
+                    </div>
+                    
+                    <div class="relative mb-3">
+                        <input 
+                            type="text" 
+                            id="global-search" 
+                            placeholder="Caută în toate cele 67 de taxoni..."
+                            data-placeholder-ro="Caută în toate cele 67 de taxoni..."
+                            data-placeholder-en="Search all 67 taxa..."
+                            class="w-full bg-slate-900 border border-slate-700 rounded-xl px-10 py-3 text-sm text-white outline-none focus:ring-2 focus:ring-blue-500 focus-visible" 
+                            autocomplete="off"
+                        >
+                        <svg class="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                    
+                    <div id="global-search-results" class="space-y-2 custom-scrollbar flex-grow overflow-y-auto"></div>
+                </section>
+            </div>
+
+            <!-- Right Panel: Details & Preview -->
+            <div class="lg:col-span-5 flex flex-col gap-4 overflow-hidden">
+                
+                <!-- Preview Card -->
+                <section class="glass p-6 rounded-3xl flex flex-col relative min-h-[380px]">
+                    <div id="details-empty" class="flex flex-col items-center justify-center h-full text-center text-slate-500">
+                        <svg class="w-14 h-14 mb-3 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0121 18.382V7.618a1 1 0 01-.806-.984A1 1 0 0121 5.618l-4.553-2.276A1 1 0 0115 3.618v10.764a1 1 0 01-.553.894L9 18m6-10l-6 3m6-3V5.618a1 1 0 01-.553-.894L9 3.618v10.764a1 1 0 01.553.894L15 18"></path>
+                        </svg>
+                        <p class="text-sm" data-lang-ro="Selectați un taxon pentru detalii" data-lang-en="Select a taxon for details">Selectați un taxon pentru detalii</p>
+                        <p class="text-xs text-slate-600 mt-1" data-lang-ro="Folosiți pașii din stânga sau căutarea globală" data-lang-en="Use steps on the left or global search">Folosiți pașii din stânga sau căutarea globală</p>
+                    </div>
+                    
+                    <div id="details-content" class="hidden space-y-5">
+                        <!-- Header -->
+                        <div class="space-y-2">
+                            <h3 id="view-scientific-name" class="text-xl font-bold text-white italic"></h3>
+                            <div id="view-authorship" class="text-xs text-slate-400 font-mono"></div>
+                            <div class="flex flex-wrap gap-2 mt-3">
+                                <span id="view-rank" class="px-2 py-1 bg-blue-900/30 text-blue-300 rounded-lg text-[10px] font-bold uppercase"></span>
+                                <span id="view-status" class="px-2 py-1 bg-emerald-900/30 text-emerald-300 rounded-lg text-[10px] font-bold uppercase"></span>
+                                <span id="view-breed" class="px-2 py-1 bg-amber-900/30 text-amber-300 rounded-lg text-[10px] font-bold uppercase hidden"></span>
+                                <a id="view-col-link" href="#" target="_blank" class="px-2 py-1 bg-slate-800 text-slate-300 rounded-lg text-[10px] font-mono hover:bg-slate-700 transition-colors flex items-center gap-1">
+                                    <span id="view-col-id"></span>
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Vernacular Names -->
+                        <div class="grid grid-cols-2 gap-3 pt-3 border-t border-slate-800">
+                            <div>
+                                <div class="text-[10px] font-bold text-slate-500 uppercase mb-1" data-lang-ro="English" data-lang-en="English">English</div>
+                                <div id="view-vernacular-en" class="text-sm text-white"></div>
+                            </div>
+                            <div>
+                                <div class="text-[10px] font-bold text-slate-500 uppercase mb-1" data-lang-ro="Română" data-lang-en="Romanian">Română</div>
+                                <div id="view-vernacular-ro" class="text-sm text-white"></div>
+                            </div>
+                        </div>
+
+                        <!-- Breadcrumb Navigation -->
+                        <div class="pt-3 border-t border-slate-800">
+                            <div class="text-[10px] font-bold text-slate-500 uppercase mb-2" data-lang-ro="Clasificare Taxonomică" data-lang-en="Taxonomic Classification">Clasificare Taxonomică</div>
+                            <div id="view-breadcrumb" class="flex flex-wrap gap-1 text-xs items-center leading-relaxed"></div>
+                        </div>
+
+                        <!-- ChecklistBank Info -->
+                        <div class="p-4 bg-slate-900/80 rounded-xl border border-slate-800 space-y-2">
+                            <div class="text-[10px] font-bold text-slate-400 flex items-center uppercase tracking-wider">
+                                <svg class="w-3 h-3 mr-1.5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <span data-lang-ro="ChecklistBank 3LR" data-lang-en="ChecklistBank 3LR">ChecklistBank 3LR</span>
+                            </div>
+                            <div id="col-hierarchy" class="text-[10px] text-slate-500 leading-relaxed space-y-1"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Export Section -->
+                <section class="glass rounded-3xl flex-grow overflow-hidden flex flex-col">
+                    <div class="p-3 border-b border-slate-800 flex justify-between items-center">
+                        <h3 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest" data-lang-ro="Export Date" data-lang-en="Export Data">Export Date</h3>
+                        <div class="flex gap-2">
+                            <button id="btn-copy" class="text-[10px] text-blue-400 uppercase font-bold hover:text-blue-300 px-2 py-1 rounded hover:bg-slate-800 transition-colors">Copy</button>
+                            <button id="btn-download" class="text-[10px] text-green-400 uppercase font-bold hover:text-green-300 px-2 py-1 rounded hover:bg-slate-800 transition-colors">Download</button>
+                        </div>
+                    </div>
+                    <pre id="json-preview" class="p-4 text-[10px] font-mono text-emerald-400 overflow-auto custom-scrollbar flex-grow"></pre>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2"></div>
+    
+    <div id="loading-overlay" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 hidden items-center justify-center">
+        <div class="text-center">
+            <div class="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full loading-spinner mx-auto mb-4"></div>
+            <h2 class="text-white text-lg font-semibold" data-lang-ro="Se încarcă..." data-lang-en="Loading...">Se încarcă...</h2>
+        </div>
+    </div>
+
+    <script>
+        // ── Configuration ─────────────────────────────────────────────────────────
+        const COL_DATASET_ID = '3LR';
+        const COL_BASE_URL = 'https://www.checklistbank.org/dataset';
+        
+        // ── State ─────────────────────────────────────────────────────────────────
+        let colTaxonomy = [];      // CoL taxonomy data
+        let taxonomyMap = {};      // Category mappings
+        let lang = 'ro';
+        let selectedCategory = null;
+        let selectedSubcategory = null;
+        let selectedTaxon = null;
+        let selectedBreed = null;
+        let activeTaxon = null;    // For generic selection
+        let searchTimeout = null;
+
+        // ── UI Utilities ──────────────────────────────────────────────────────────
+        function showToast(msg, type='info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const bg = type === 'success' ? 'bg-emerald-600' : type === 'error' ? 'bg-red-600' : 'bg-blue-600';
+            toast.className = `toast ${bg} text-white px-4 py-3 rounded-lg shadow-lg text-sm font-medium`;
+            toast.textContent = msg;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        function showLoading(show=true) {
+            const overlay = document.getElementById('loading-overlay');
+            overlay.classList.toggle('hidden', !show);
+            overlay.classList.toggle('flex', show);
+        }
+
+        // ── Initialization ────────────────────────────────────────────────────────
+        async function init() {
+            try {
+                showLoading(true);
+                const [colRes, mapRes] = await Promise.all([
+                    fetch('./data/standardized_taxonomy.json'),
+                    fetch('./data/taxonomy_map.json')
+                ]);
+                
+                if (!colRes.ok) throw new Error('CoL taxonomy data missing');
+                if (!mapRes.ok) throw new Error('Taxonomy map missing');
+                
+                colTaxonomy = await colRes.json();
+                taxonomyMap = await mapRes.json();
+                
+                populateCategories();
+                setupEventHandlers();
+                updateLangUI();
+                showToast(`Încărcate ${colTaxonomy.length} taxoni din CoL`, 'success');
+            } catch (e) {
+                console.error(e);
+                showToast(`Eroare: ${e.message}`, 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // ── Category Population ───────────────────────────────────────────────────
+        function populateCategories() {
+            const grid = document.getElementById('category-grid');
+            grid.innerHTML = '';
+            
+            // Extract unique category groups from standardized taxonomy
+            const categoryGroups = {};
+            colTaxonomy.forEach(item => {
+                const group = item.category_group || 'Alte animale';
+                if (!categoryGroups[group]) {
+                    categoryGroups[group] = {
+                        name: group,
+                        latin: group,
+                        count: 0,
+                        domesticCount: 0
+                    };
+                }
+                categoryGroups[group].count++;
+                if (item.is_domestic) {
+                    categoryGroups[group].domesticCount++;
+                }
+            });
+            
+            // Sort categories by name
+            Object.keys(categoryGroups).sort().forEach(groupName => {
+                const group = categoryGroups[groupName];
+                const btn = document.createElement('button');
+                
+                btn.className = 'category-btn';
+                btn.dataset.category = groupName;
+                btn.innerHTML = `
+                    <div class="flex flex-col items-start">
+                        <span>${groupName}</span>
+                        <span class="text-[9px] opacity-70 font-normal normal-case">${group.count} specii (${group.domesticCount} domestice)</span>
+                    </div>
+                `;
+                btn.onclick = () => selectCategory(groupName, btn);
+                grid.appendChild(btn);
+            });
+        }
+
+        function selectCategory(catKey, btnElement) {
+            selectedCategory = catKey;
+            selectedSubcategory = null;
+            selectedTaxon = null;
+            
+            // Update UI
+            document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+            btnElement.classList.add('active');
+            
+            // Set active taxon info
+            activeTaxon = { rank: 'category', latin: catKey, label: catKey };
+            const badge = document.getElementById('cat-rank-badge');
+            badge.textContent = `Categorie: ${catKey}`;
+            badge.classList.remove('hidden');
+            
+            // Show species list directly (skip subcategories for standardized data)
+            showSpeciesForCategory();
+            
+            // Show step 3 panel
+            document.getElementById('step2-panel').classList.add('hidden');
+            document.getElementById('step3-panel').classList.remove('hidden');
+            document.getElementById('unified-search-panel').classList.add('hidden');
+            document.getElementById('sub-rank-badge').classList.add('hidden');
+            
+            populateSubcategories();
+            clearDetails();
+        }
+
+        // ── Subcategory Population ──────────────────────────────────────────────
+        function populateSubcategories() {
+            const grid = document.getElementById('subcategory-grid');
+            grid.innerHTML = '';
+            
+            const catData = taxonomyMap.categories?.[selectedCategory];
+            if (!catData) return;
+            
+            // Get subcategories that belong to this category
+            const relatedSubcats = Object.keys(taxonomyMap.subcategories || {}).filter(subKey => {
+                const sub = taxonomyMap.subcategories[subKey];
+                // Check if subcategory's genera overlap with category's genera
+                return sub.genera?.some(g => catData.genera?.includes(g));
+            });
+            
+            if (relatedSubcats.length === 0) {
+                // No subcategories - skip to species list
+                document.getElementById('step2-panel').classList.add('hidden');
+                showSpeciesForCategory();
+                return;
+            }
+            
+            relatedSubcats.forEach(subKey => {
+                const sub = taxonomyMap.subcategories[subKey];
+                const btn = document.createElement('button');
+                const label = lang === 'ro' ? (sub.ro || subKey) : (sub.en || subKey);
+                
+                btn.className = 'subcategory-btn';
+                btn.dataset.subcategory = subKey;
+                btn.textContent = label.toUpperCase();
+                btn.onclick = () => selectSubcategory(subKey, btn);
+                grid.appendChild(btn);
+            });
+        }
+
+        function selectSubcategory(subKey, btnElement) {
+            selectedSubcategory = subKey;
+            selectedTaxon = null;
+            
+            // Update UI
+            document.querySelectorAll('.subcategory-btn').forEach(b => b.classList.remove('active'));
+            btnElement.classList.add('active');
+            
+            const subInfo = taxonomyMap.subcategories[subKey];
+            if (subInfo) {
+                activeTaxon = { rank: subInfo.rank, latin: subInfo.latin, label: lang === 'ro' ? subInfo.ro : subInfo.en };
+                const badge = document.getElementById('sub-rank-badge');
+                badge.textContent = `${taxonomyMap.rank_translations?.[subInfo.rank] || subInfo.rank}: ${subInfo.latin}`;
+                badge.classList.remove('hidden');
+            }
+            
+            showSpeciesForCategory();
+        }
+
+        // ── Species List ──────────────────────────────────────────────────────────
+        function showSpeciesForCategory() {
+            document.getElementById('step3-panel').classList.remove('hidden');
+            
+            // Filter standardized taxonomy by category group
+            const filtered = colTaxonomy.filter(taxon => {
+                return taxon.category_group === selectedCategory;
+            });
+            
+            // Sort by domestic status first, then by scientific name
+            filtered.sort((a, b) => {
+                if (a.is_domestic && !b.is_domestic) return -1;
+                if (!a.is_domestic && b.is_domestic) return 1;
+                return a.scientific_name.localeCompare(b.scientific_name);
+            });
+            
+            renderSpeciesList(filtered);
+            
+            // Show category info
+            const genericContainer = document.getElementById('generic-container');
+            if (activeTaxon) {
+                genericContainer.classList.remove('hidden');
+                document.getElementById('generic-label').textContent = 
+                    lang === 'ro' 
+                        ? `Categorie: ${activeTaxon.label}`
+                        : `Category: ${activeTaxon.label}`;
+            } else {
+                genericContainer.classList.add('hidden');
+            }
+        }
+
+        function renderSpeciesList(species, highlightQuery = '') {
+            const list = document.getElementById('species-list');
+            list.innerHTML = '';
+            
+            document.getElementById('species-count').textContent = `${species.length} ${lang === 'ro' ? 'rezultate' : 'results'}`;
+            
+            if (species.length === 0) {
+                list.innerHTML = `
+                    <div class="text-center text-slate-500 py-8">
+                        <p class="text-sm">${lang === 'ro' ? 'Niciun rezultat' : 'No results'}</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            species.forEach(taxon => {
+                const div = document.createElement('div');
+                div.className = `species-item bg-slate-900/50 border-slate-800 ${selectedTaxon?.col_internal_id === taxon.col_internal_id ? 'active' : ''}`;
+                
+                const name = highlightMatch(taxon.scientific_name, highlightQuery);
+                const vernacular = lang === 'ro' 
+                    ? (taxon.romanian_vernacular !== 'Negăsit' ? taxon.romanian_vernacular : taxon.english_vernacular)
+                    : taxon.english_vernacular;
+                
+                // Create status badges
+                let badges = `
+                    <span class="px-2 py-0.5 bg-blue-900/30 text-blue-300 rounded text-[9px] font-bold uppercase">${taxon.rank || 'GENUS'}</span>
+                    <span class="px-2 py-0.5 bg-slate-800 text-slate-400 rounded text-[9px] font-mono">${taxon.col_internal_id}</span>
+                `;
+                
+                if (taxon.is_domestic) {
+                    badges += `<span class="px-2 py-0.5 bg-green-900/30 text-green-300 rounded text-[9px] font-bold uppercase">DOMESTIC</span>`;
+                }
+                
+                if (taxon.has_breeds) {
+                    badges += `<span class="px-2 py-0.5 bg-purple-900/30 text-purple-300 rounded text-[9px] font-bold uppercase">${taxon.breeds?.length || 0} RASE</span>`;
+                }
+                
+                div.innerHTML = `
+                    <div>
+                        <div class="font-bold text-white text-sm italic">${name}</div>
+                        <div class="text-[10px] text-slate-400">${vernacular !== 'Not found' ? vernacular : ''}</div>
+                        ${taxon.breadcrumb ? `<div class="text-[9px] text-slate-500 mt-1">${taxon.breadcrumb}</div>` : ''}
+                    </div>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        ${badges}
+                    </div>
+                `;
+                
+                div.onclick = () => selectTaxon(taxon);
+                list.appendChild(div);
+            });
+        }
+
+        function highlightMatch(text, query) {
+            if (!query) return text;
+            const regex = new RegExp(`(${escapeRegExp(query)})`, 'gi');
+            return text.replace(regex, '<span class="highlight">$1</span>');
+        }
+
+        function escapeRegExp(string) {
+            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
+
+        // ── Event Handlers ────────────────────────────────────────────────────────
+        function setupEventHandlers() {
+            // Species search within category
+            const speciesSearch = document.getElementById('species-search');
+            speciesSearch.addEventListener('input', (e) => {
+                clearTimeout(searchTimeout);
+                const query = e.target.value.trim();
+                document.getElementById('clear-species-search').classList.toggle('hidden', !query);
+                
+                if (query.length < 1) {
+                    showSpeciesForCategory();
+                    return;
+                }
+                
+                searchTimeout = setTimeout(() => filterSpeciesInCategory(query), 150);
+            });
+
+            document.getElementById('clear-species-search').onclick = () => {
+                speciesSearch.value = '';
+                showSpeciesForCategory();
+                document.getElementById('clear-species-search').classList.add('hidden');
+                speciesSearch.focus();
+            };
+
+            // Unified search toggle
+            document.getElementById('btn-unified-search').onclick = () => {
+                document.getElementById('step3-panel').classList.add('hidden');
+                document.getElementById('unified-search-panel').classList.remove('hidden');
+                document.getElementById('global-search').focus();
+            };
+
+            document.getElementById('btn-back-to-categories').onclick = () => {
+                document.getElementById('unified-search-panel').classList.add('hidden');
+                document.getElementById('step3-panel').classList.remove('hidden');
+            };
+
+            // Global search
+            const globalSearch = document.getElementById('global-search');
+            globalSearch.addEventListener('input', (e) => {
+                clearTimeout(searchTimeout);
+                const query = e.target.value.trim();
+                
+                if (query.length < 2) {
+                    document.getElementById('global-search-results').innerHTML = '';
+                    return;
+                }
+                
+                searchTimeout = setTimeout(() => performGlobalSearch(query), 200);
+            });
+
+            // Generic selection
+            document.getElementById('btn-generic').onclick = () => {
+                if (activeTaxon) {
+                    selectGenericTaxon();
+                }
+            };
+
+            // Skip breed button
+            document.getElementById('btn-skip-breed').onclick = () => {
+                selectedBreed = null;
+                document.getElementById('breed-select').value = '';
+                updateDetailsPanel();
+                updateExport();
+                showToast(lang === 'ro' ? 'Rasă ignorată (selecție generică)' : 'Breed skipped (generic selection)', 'info');
+            };
+
+            // Export
+            document.getElementById('btn-copy').onclick = () => {
+                navigator.clipboard.writeText(document.getElementById('json-preview').textContent);
+                showToast(lang === 'ro' ? 'JSON copiat!' : 'JSON copied!', 'success');
+            };
+
+            document.getElementById('btn-download').onclick = () => {
+                const blob = new Blob([document.getElementById('json-preview').textContent], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `taxon-${selectedTaxon?.col_internal_id || 'export'}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+                showToast(lang === 'ro' ? 'Descărcat!' : 'Downloaded!', 'success');
+            };
+
+            // Language
+            document.getElementById('btn-ro').onclick = () => { lang = 'ro'; updateLangUI(); };
+            document.getElementById('btn-en').onclick = () => { lang = 'en'; updateLangUI(); };
+        }
+
+        function filterSpeciesInCategory(query) {
+            const catInfo = taxonomyMap.categories?.[selectedCategory];
+            const subInfo = selectedSubcategory ? taxonomyMap.subcategories?.[selectedSubcategory] : null;
+            
+            let filterGenera = [];
+            if (subInfo?.genera) {
+                filterGenera = subInfo.genera;
+            } else if (catInfo?.genera) {
+                filterGenera = catInfo.genera;
+            }
+            
+            const lowerQuery = query.toLowerCase();
+            const filtered = colTaxonomy.filter(taxon => {
+                const genus = taxon.scientific_name.split(' ')[0];
+                const matchesGenus = filterGenera.some(g => g.toLowerCase() === genus.toLowerCase());
+                if (!matchesGenus) return false;
+                
+                const searchable = [
+                    taxon.scientific_name,
+                    taxon.english_vernacular,
+                    taxon.romanian_vernacular,
+                    taxon.col_internal_id
+                ].join(' ').toLowerCase();
+                
+                return searchable.includes(lowerQuery);
+            });
+            
+            renderSpeciesList(filtered, query);
+        }
+
+        function performGlobalSearch(query) {
+            const lowerQuery = query.toLowerCase();
+            
+            const results = colTaxonomy.filter(taxon => {
+                const searchable = [
+                    taxon.scientific_name,
+                    taxon.english_vernacular,
+                    taxon.romanian_vernacular,
+                    taxon.col_internal_id,
+                    taxon.c_family,
+                    taxon.c_order,
+                    taxon.c_genus
+                ].join(' ').toLowerCase();
+                
+                return searchable.includes(lowerQuery);
+            }).slice(0, 20);
+            
+            renderGlobalResults(results, query);
+        }
+
+        function renderGlobalResults(results, highlightQuery) {
+            const container = document.getElementById('global-search-results');
+            container.innerHTML = '';
+            
+            if (results.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-slate-500 py-8">
+                        <p class="text-sm">${lang === 'ro' ? 'Niciun rezultat' : 'No results'}</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            results.forEach(taxon => {
+                const div = document.createElement('div');
+                div.className = `search-result bg-slate-900/50 border-slate-800 ${selectedTaxon?.col_internal_id === taxon.col_internal_id ? 'active' : ''}`;
+                
+                const name = highlightMatch(taxon.scientific_name, highlightQuery);
+                const vernacular = lang === 'ro' 
+                    ? (taxon.romanian_vernacular !== 'Negăsit' ? taxon.romanian_vernacular : taxon.english_vernacular)
+                    : taxon.english_vernacular;
+                
+                div.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <div class="font-bold text-white text-sm italic">${name}</div>
+                            <div class="text-[10px] text-slate-400 mt-1">${vernacular !== 'Not found' ? vernacular : ''}</div>
+                            <div class="flex gap-2 mt-2">
+                                <span class="px-2 py-0.5 bg-blue-900/30 text-blue-300 rounded text-[9px] font-bold uppercase">${taxon.rank || 'GENUS'}</span>
+                                <span class="px-2 py-0.5 bg-slate-800 text-slate-400 rounded text-[9px] font-mono">${taxon.col_internal_id}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                div.onclick = () => {
+                    selectTaxon(taxon);
+                    // Auto-detect and set category
+                    autoDetectCategory(taxon);
+                };
+                container.appendChild(div);
+            });
+        }
+
+        function autoDetectCategory(taxon) {
+            // Try to find which category this taxon belongs to
+            const genus = taxon.scientific_name.split(' ')[0];
+            
+            for (const [catKey, catData] of Object.entries(taxonomyMap.categories || {})) {
+                if (catData.genera?.some(g => g.toLowerCase() === genus.toLowerCase())) {
+                    selectedCategory = catKey;
+                    activeTaxon = { rank: catData.rank, latin: catData.latin, label: lang === 'ro' ? catData.ro : catData.en };
+                    
+                    // Update UI
+                    document.querySelectorAll('.category-btn').forEach(b => {
+                        b.classList.toggle('active', b.dataset.category === catKey);
+                    });
+                    
+                    const badge = document.getElementById('cat-rank-badge');
+                    badge.textContent = `${taxonomyMap.rank_translations?.[catData.rank] || catData.rank}: ${catData.latin}`;
+                    badge.classList.remove('hidden');
+                    
+                    populateSubcategories();
+                    break;
+                }
+            }
+        }
+
+        // ── Taxon Selection ───────────────────────────────────────────────────────
+        function selectTaxon(taxon) {
+            selectedTaxon = taxon;
+            selectedBreed = null;
+            
+            // Update UI
+            document.querySelectorAll('.species-item, .search-result').forEach(el => el.classList.remove('active'));
+            event?.currentTarget?.classList.add('active');
+            
+            // Handle breeds
+            if (taxon.has_breeds && taxon.breeds && taxon.breeds.length > 0) {
+                showBreedPanel(taxon.breeds);
+            } else {
+                hideBreedPanel();
+            }
+            
+            updateDetailsPanel();
+            updateExport();
+        }
+
+        function showBreedPanel(breeds) {
+            const panel = document.getElementById('breed-panel');
+            const select = document.getElementById('breed-select');
+            
+            panel.classList.remove('hidden');
+            
+            // Clear and populate
+            select.innerHTML = `<option value="" disabled selected>-- ${lang === 'ro' ? 'Alege Rasa' : 'Choose Breed'} --</option>`;
+            
+            breeds.forEach((breed, index) => {
+                const opt = document.createElement('option');
+                opt.value = index;
+                opt.textContent = breed[lang] || breed.en;
+                select.appendChild(opt);
+            });
+            
+            // Show count
+            document.getElementById('breed-count').textContent = `${breeds.length} ${lang === 'ro' ? 'rase' : 'breeds'}`;
+            
+            // Handle selection
+            select.onchange = (e) => {
+                if (e.target.value !== '') {
+                    selectedBreed = selectedTaxon.breeds[parseInt(e.target.value)];
+                    updateDetailsPanel();
+                    updateExport();
+                }
+            };
+        }
+
+        function hideBreedPanel() {
+            document.getElementById('breed-panel').classList.add('hidden');
+            selectedBreed = null;
+        }
+
+        function selectGenericTaxon() {
+            selectedTaxon = {
+                is_generic: true,
+                rank: activeTaxon.rank,
+                scientific_name: activeTaxon.latin,
+                ro: activeTaxon.label,
+                en: activeTaxon.label,
+                col_internal_id: 'GENERIC'
+            };
+            selectedBreed = null;
+            hideBreedPanel();
+            
+            updateDetailsPanel();
+            updateExport();
+        }
+
+        function clearDetails() {
+            document.getElementById('details-empty').classList.remove('hidden');
+            document.getElementById('details-content').classList.add('hidden');
+            document.getElementById('json-preview').textContent = '// ' + (lang === 'ro' ? 'Selectați un taxon' : 'Select a taxon');
+        }
+
+        function updateDetailsPanel() {
+            if (!selectedTaxon) return;
+            
+            const t = selectedTaxon;
+            
+            document.getElementById('details-empty').classList.add('hidden');
+            document.getElementById('details-content').classList.remove('hidden');
+            
+            // Basic info
+            document.getElementById('view-scientific-name').textContent = t.scientific_name;
+            document.getElementById('view-authorship').textContent = t.authorship || '';
+            
+            // Rank and status
+            const rank = t.rank || 'GENUS';
+            document.getElementById('view-rank').textContent = rank.toUpperCase();
+            document.getElementById('view-status').textContent = (t.status || 'ACCEPTED').toUpperCase();
+            
+            // Show/hide breed badge
+            const breedBadge = document.getElementById('view-breed');
+            if (selectedBreed) {
+                breedBadge.textContent = (selectedBreed[lang] || selectedBreed.en).toUpperCase();
+                breedBadge.classList.remove('hidden');
+            } else {
+                breedBadge.classList.add('hidden');
+            }
+            
+            document.getElementById('view-col-id').textContent = t.col_internal_id || 'DOMESTIC';
+            
+            // Link to ChecklistBank (only for non-domestic species with valid IDs)
+            const link = document.getElementById('view-col-link');
+            if (t.col_internal_id && t.col_internal_id.startsWith('DOMESTIC_')) {
+                link.style.display = 'none';
+            } else if (t.col_internal_id) {
+                link.style.display = 'inline-flex';
+                link.href = `${COL_BASE_URL}/${COL_DATASET_ID}/taxon/${t.col_internal_id}`;
+            } else {
+                link.style.display = 'none';
+            }
+            
+            // Vernacular names
+            document.getElementById('view-vernacular-en').textContent = t.english_vernacular && t.english_vernacular !== 'Not found' ? t.english_vernacular : '—';
+            document.getElementById('view-vernacular-ro').textContent = t.romanian_vernacular && t.romanian_vernacular !== 'Negăsit' ? t.romanian_vernacular : '—';
+            
+            // Category group
+            const categoryDiv = document.getElementById('col-hierarchy');
+            if (t.category_group) {
+                categoryDiv.innerHTML = `<div class="text-sm"><strong>Category Group:</strong> ${t.category_group}</div>`;
+            }
+            
+            // Domestic status
+            if (t.is_domestic) {
+                categoryDiv.innerHTML += `<div class="text-sm text-green-400"><strong>Status:</strong> Domestic Species</div>`;
+            } else {
+                categoryDiv.innerHTML += `<div class="text-sm text-slate-400"><strong>Status:</strong> Wild Species</div>`;
+            }
+            
+            // Breadcrumbs
+            renderBreadcrumb(t);
+            
+            // Full hierarchy
+            if (t.breadcrumb) {
+                categoryDiv.innerHTML += `<div class="text-xs text-slate-500 mt-2">${t.breadcrumb}</div>`;
+            }
+        }
+
+        function renderBreadcrumb(taxon) {
+            const container = document.getElementById('view-breadcrumb');
+            container.innerHTML = '';
+            
+            if (!taxon.breadcrumb || taxon.is_generic) {
+                container.innerHTML = '<span class="text-slate-500">—</span>';
+                return;
+            }
+            
+            const parts = taxon.breadcrumb.split(' > ');
+            
+            parts.forEach((part, index) => {
+                const matchingTaxon = colTaxonomy.find(t => 
+                    t.scientific_name === part || 
+                    t.c_kingdom === part || t.c_phylum === part ||
+                    t.c_class === part || t.c_order === part ||
+                    t.c_family === part || t.c_genus === part ||
+                    t.c_species === part
+                );
+                
+                const span = document.createElement('span');
+                
+                if (matchingTaxon && matchingTaxon.col_internal_id !== taxon.col_internal_id) {
+                    const link = document.createElement('a');
+                    link.href = `${COL_BASE_URL}/${COL_DATASET_ID}/taxon/${matchingTaxon.col_internal_id}`;
+                    link.target = '_blank';
+                    link.className = 'breadcrumb-link';
+                    link.textContent = part;
+                    span.appendChild(link);
+                } else {
+                    span.className = 'text-white font-semibold';
+                    span.textContent = part;
+                }
+                
+                container.appendChild(span);
+                
+                if (index < parts.length - 1) {
+                    const sep = document.createElement('span');
+                    sep.className = 'text-slate-600 mx-0.5';
+                    sep.textContent = '›';
+                    container.appendChild(sep);
+                }
+            });
+        }
+
+        function updateExport() {
+            if (!selectedTaxon) {
+                document.getElementById('json-preview').textContent = '// ' + (lang === 'ro' ? 'Selectați un taxon' : 'Select a taxon');
+                return;
+            }
+            
+            const t = selectedTaxon;
+            const exportObj = {
+                taxonomyRecord: {
+                    col_internal_id: t.is_generic ? null : t.col_internal_id,
+                    rank: t.is_generic ? t.rank : (t.rank || 'GENUS'),
+                    status: t.status || 'ACCEPTED',
+                    scientific_name: t.scientific_name,
+                    authorship: t.authorship || null,
+                    vernacular: {
+                        romanian: t.romanian_vernacular || null,
+                        english: t.english_vernacular || null
+                    },
+                    category: selectedCategory,
+                    subcategory: selectedSubcategory,
+                    breed: selectedBreed ? {
+                        romanian: selectedBreed.ro,
+                        english: selectedBreed.en
+                    } : (t.has_breeds && !selectedBreed ? "UNKNOWN" : "N/A"),
+                    is_generic: t.is_generic || false,
+                    classification: t.is_generic ? null : {
+                        kingdom: t.c_kingdom,
+                        phylum: t.c_phylum,
+                        class: t.c_class,
+                        order: t.c_order,
+                        family: t.c_family,
+                        genus: t.c_genus,
+                        species: t.c_species
+                    },
+                    breadcrumb: t.breadcrumb || null,
+                    checklistbank_url: t.is_generic ? null : `${COL_BASE_URL}/${COL_DATASET_ID}/taxon/${t.col_internal_id}`,
+                    timestamp: new Date().toISOString()
+                }
+            };
+            
+            document.getElementById('json-preview').textContent = JSON.stringify(exportObj, null, 4);
+        }
+
+        function updateLangUI() {
+            // Language buttons
+            document.getElementById('btn-ro').className = lang === 'ro' 
+                ? 'px-4 py-1.5 rounded-lg bg-blue-600 text-white text-sm' 
+                : 'px-4 py-1.5 rounded-lg text-slate-400 text-sm';
+            document.getElementById('btn-en').className = lang === 'en' 
+                ? 'px-4 py-1.5 rounded-lg bg-blue-600 text-white text-sm' 
+                : 'px-4 py-1.5 rounded-lg text-slate-400 text-sm';
+            
+            // Update placeholders and labels
+            document.querySelectorAll('[data-lang-ro][data-lang-en]').forEach(el => {
+                if (el.hasAttribute('placeholder')) {
+                    el.placeholder = el.getAttribute(`data-placeholder-${lang}`) || el.getAttribute(`data-lang-${lang}`);
+                } else {
+                    el.textContent = el.getAttribute(`data-lang-${lang}`);
+                }
+            });
+            
+            // Re-populate categories with new language
+            populateCategories();
+            
+            // Re-populate subcategories if visible
+            if (selectedCategory) {
+                populateSubcategories();
+            }
+            
+            // Refresh species list
+            if (selectedCategory) {
+                showSpeciesForCategory();
+            }
+            
+            // Update details if visible
+            if (selectedTaxon) {
+                updateDetailsPanel();
+            }
+            
+            // Update search results if visible
+            const globalQuery = document.getElementById('global-search').value;
+            if (globalQuery) {
+                performGlobalSearch(globalQuery);
+            }
+        }
+
+        // ── Start ─────────────────────────────────────────────────────────────────
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

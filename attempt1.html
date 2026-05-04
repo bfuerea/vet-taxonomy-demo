@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Taxonomie Standardizată</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        /* Custom scrollbar for the code preview */
+        pre::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        pre::-webkit-scrollbar-track {
+            background: #1f2937; 
+        }
+        pre::-webkit-scrollbar-thumb {
+            background: #4b5563; 
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 sm:p-8">
+
+    <div class="max-w-4xl w-full grid grid-cols-1 md:grid-cols-2 gap-8">
+        
+        <!-- Left Panel: Data Entry Form -->
+        <div class="bg-white rounded-2xl shadow-xl p-8 border border-gray-100 flex flex-col h-full">
+            <div class="flex justify-between items-start mb-6">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-800">Înregistrare Caz</h1>
+                    <p class="text-sm text-gray-500 mt-1">Sistem de Taxonomie Standardizată</p>
+                </div>
+                <!-- Language Toggle -->
+                <div class="flex bg-gray-100 rounded-lg p-1">
+                    <button id="lang-ro" class="px-3 py-1 text-sm font-medium rounded-md bg-white shadow-sm text-blue-600 transition-all">RO</button>
+                    <button id="lang-en" class="px-3 py-1 text-sm font-medium rounded-md text-gray-500 hover:text-gray-700 transition-all">EN</button>
+                </div>
+            </div>
+
+            <form class="space-y-6 flex-grow">
+                <!-- Species Selector -->
+                <div>
+                    <label id="label-species" for="species" class="block text-sm font-semibold text-gray-700 mb-2">Specie *</label>
+                    <div class="relative">
+                        <select id="species" class="block w-full pl-4 pr-10 py-3 text-base border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-xl border bg-gray-50 appearance-none cursor-pointer transition-colors hover:bg-white">
+                            <option value="" disabled selected>-- Selectați specia --</option>
+                            <!-- Options will be populated by JS -->
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Breed Selector -->
+                <div id="breed-container" class="opacity-50 transition-opacity duration-300">
+                    <label id="label-breed" for="breed" class="block text-sm font-semibold text-gray-700 mb-2">Rasă</label>
+                    <div class="relative">
+                        <select id="breed" disabled class="block w-full pl-4 pr-10 py-3 text-base border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-xl border bg-gray-100 appearance-none cursor-not-allowed transition-colors">
+                            <option value="" disabled selected>-- Specia nu necesită rasă --</option>
+                            <!-- Options will be populated by JS -->
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-400">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                    </div>
+                    <p id="breed-hint" class="mt-2 text-xs text-gray-500 hidden">Vă rugăm să selectați rasa specifică.</p>
+                </div>
+            </form>
+
+            <div class="mt-8 pt-6 border-t border-gray-100">
+                <div class="flex items-center text-sm text-green-600 bg-green-50 p-3 rounded-lg">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span id="validation-msg">Așteptare selecție...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel: Database JSON Preview -->
+        <div class="bg-gray-900 rounded-2xl shadow-xl border border-gray-800 flex flex-col overflow-hidden h-full">
+            <div class="bg-gray-800 px-6 py-4 border-b border-gray-700 flex justify-between items-center">
+                <h2 class="text-sm font-mono text-gray-300 flex items-center">
+                    <svg class="w-4 h-4 mr-2 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg>
+                    MongoDB Document Preview
+                </h2>
+                <span class="px-2 py-1 text-xs font-mono bg-gray-700 text-gray-300 rounded">stdTaxonomy</span>
+            </div>
+            <div class="p-6 flex-grow relative overflow-auto">
+                <pre id="json-preview" class="text-sm font-mono text-green-400 m-0 whitespace-pre-wrap break-words">
+{
+  "stdTaxonomy": null
+}</pre>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- 1. The Taxonomy Database (Directly from Canvas) ---
+        const taxonomyData = [
+  {
+    "type": "taxonomy",
+    "species": {
+      "ro": "CAINE",
+      "en": "Dog",
+      "latin": "Canis lupus familiaris"
+    },
+    "has_breeds": true,
+    "breeds": [
+      { "ro": "RASA COMUNA", "en": "Mixed Breed" },
+      { "ro": "METIS", "en": "Mixed Breed" },
+      { "ro": "CIOBANESC GERMAN", "en": "German Shepherd" },
+      { "ro": "CANICHE", "en": "Poodle" },
+      { "ro": "COCKER", "en": "Cocker Spaniel" },
+      { "ro": "COCKER SPANIEL", "en": "Cocker Spaniel" },
+      { "ro": "ROTTWEILER", "en": "Rottweiler" },
+      { "ro": "BOXER", "en": "Boxer" },
+      { "ro": "BICHON", "en": "Bichon" },
+      { "ro": "BICHON MALTEZ", "en": "Maltese" },
+      { "ro": "PEKINEZ", "en": "Pekingese" },
+      { "ro": "DOBERMAN", "en": "Doberman Pinscher" },
+      { "ro": "TECKEL", "en": "Dachshund" },
+      { "ro": "LABRADOR", "en": "Labrador Retriever" },
+      { "ro": "GOLDEN RETRIEVER", "en": "Golden Retriever" },
+      { "ro": "BRAC GERMAN", "en": "German Shorthaired Pointer" },
+      { "ro": "SCHNAUTZER URIAS", "en": "Giant Schnauzer" },
+      { "ro": "DOG GERMAN", "en": "Great Dane" },
+      { "ro": "HUSKY", "en": "Siberian Husky" },
+      { "ro": "AMSTAFF", "en": "American Staffordshire Terrier" },
+      { "ro": "CIOBANESC MIORITIC", "en": "Mioritic Sheepdog" },
+      { "ro": "FOX TERRIER", "en": "Fox Terrier" }
+    ]
+  },
+  {
+    "type": "taxonomy",
+    "species": {
+      "ro": "PISICA",
+      "en": "Cat",
+      "latin": "Felis catus"
+    },
+    "has_breeds": true,
+    "breeds": [
+      { "ro": "RASA COMUNA", "en": "Domestic Shorthair" },
+      { "ro": "EUROPEANA", "en": "European Shorthair" },
+      { "ro": "BIRMANEZA", "en": "Birman" },
+      { "ro": "PERSANA", "en": "Persian" },
+      { "ro": "BRITISH SHORTHAIR", "en": "British Shorthair" },
+      { "ro": "MAINE COON", "en": "Maine Coon" }
+    ]
+  },
+  {
+    "type": "taxonomy",
+    "species": {
+      "ro": "LUP",
+      "en": "Wolf",
+      "latin": "Canis lupus"
+    },
+    "has_breeds": false,
+    "breeds": [],
+    "group_fields": {
+      "denumire_comuna_ro": "Lup",
+      "common_name_en": "Wolf",
+      "latin_name": "Canis lupus"
+    }
+  },
+  {
+    "type": "taxonomy",
+    "species": {
+      "ro": "BOVINA",
+      "en": "Cattle",
+      "latin": "Bos taurus"
+    },
+    "has_breeds": true,
+    "breeds": [
+      { "ro": "BALTATA ROMANEASCA", "en": "Romanian Spotted" },
+      { "ro": "HOLSTEIN", "en": "Holstein Friesian" },
+      { "ro": "ANGUS", "en": "Angus" },
+      { "ro": "BRUNA", "en": "Brown Swiss" },
+      { "ro": "SIMMENTAL", "en": "Simmental" }
+    ]
+  },
+  {
+    "type": "taxonomy",
+    "species": {
+      "ro": "PORC",
+      "en": "Pig",
+      "latin": "Sus scrofa domesticus"
+    },
+    "has_breeds": true,
+    "breeds": [
+      { "ro": "MARELE ALB", "en": "Large White" },
+      { "ro": "HIBRID", "en": "Commercial Hybrid" }
+    ]
+  },
+  {
+    "type": "taxonomy",
+    "species": {
+      "ro": "OAIE",
+      "en": "Sheep",
+      "latin": "Ovis aries"
+    },
+    "has_breeds": true,
+    "breeds": [
+      { "ro": "TURCANA", "en": "Turcana" },
+      { "ro": "TIGAIE", "en": "Tsigai" },
+      { "ro": "MERINOS", "en": "Merino" }
+    ]
+  },
+  {
+    "type": "taxonomy",
+    "species": {
+      "ro": "CAL",
+      "en": "Horse",
+      "latin": "Equus caballus"
+    },
+    "has_breeds": true,
+    "breeds": [
+      { "ro": "CAL DE SPORT", "en": "Sport Horse" },
+      { "ro": "LUSITAN", "en": "Lusitano" },
+      { "ro": "ANDALUZ", "en": "Andalusian" }
+    ]
+  },
+  {
+    "type": "taxonomy",
+    "species": {
+      "ro": "ROZATOARE",
+      "en": "Rodent",
+      "latin": "Rodentia"
+    },
+    "has_breeds": false,
+    "breeds": [],
+    "group_fields": {
+      "denumire_comuna_ro": "Rozătoare (Generic)",
+      "common_name_en": "Rodent (Order)",
+      "latin_name": "Rodentia"
+    }
+  },
+  {
+    "type": "taxonomy",
+    "species": {
+      "ro": "SOARECE",
+      "en": "Mouse",
+      "latin": "Mus musculus"
+    },
+    "has_breeds": false,
+    "breeds": [],
+    "group_fields": {
+      "denumire_comuna_ro": "Șoarece",
+      "common_name_en": "Mouse",
+      "latin_name": "Mus"
+    }
+  },
+  {
+    "type": "taxonomy",
+    "species": {
+      "ro": "SOBOLAN",
+      "en": "Rat",
+      "latin": "Rattus norvegicus"
+    },
+    "has_breeds": false,
+    "breeds": [],
+    "group_fields": {
+      "denumire_comuna_ro": "Șobolan",
+      "common_name_en": "Rat",
+      "latin_name": "Rattus"
+    }
+  },
+  {
+    "type": "taxonomy",
+    "species": {
+      "ro": "PORCUSOR DE GUINEEA",
+      "en": "Guinea Pig",
+      "latin": "Cavia porcellus"
+    },
+    "has_breeds": false,
+    "breeds": [],
+    "group_fields": {
+      "denumire_comuna_ro": "Porcușor de Guineea",
+      "common_name_en": "Guinea Pig",
+      "latin_name": "Cavia"
+    }
+  },
+  {
+    "type": "taxonomy",
+    "species": {
+      "ro": "HAMSTER",
+      "en": "Hamster",
+      "latin": "Cricetinae"
+    },
+    "has_breeds": true,
+    "breeds": [
+      { "ro": "SIBERIAN", "en": "Siberian Hamster" },
+      { "ro": "PITIC", "en": "Dwarf Hamster" },
+      { "ro": "AURIU", "en": "Syrian Hamster" }
+    ]
+  },
+  {
+    "type": "taxonomy",
+    "species": {
+      "ro": "IEPURE",
+      "en": "Rabbit",
+      "latin": "Oryctolagus cuniculus"
+    },
+    "has_breeds": true,
+    "breeds": [
+      { "ro": "CAP DE LEU", "en": "Lionhead" },
+      { "ro": "BERBEC", "en": "Lop" },
+      { "ro": "ANGORA", "en": "Angora" },
+      { "ro": "IEPURE ALB", "en": "White Rabbit" }
+    ]
+  },
+  {
+    "type": "taxonomy",
+    "species": {
+      "ro": "PASARE DE CURTE",
+      "en": "Poultry",
+      "latin": "Galliformes"
+    },
+    "has_breeds": false,
+    "breeds": [],
+    "group_fields": {
+      "denumire_comuna_ro": "Pasăre de curte (Generic)",
+      "common_name_en": "Poultry / Fowl (Order)",
+      "latin_name": "Galliformes"
+    }
+  },
+  {
+    "type": "taxonomy",
+    "species": {
+      "ro": "GAINA",
+      "en": "Chicken",
+      "latin": "Gallus gallus domesticus"
+    },
+    "has_breeds": false,
+    "breeds": [],
+    "group_fields": {
+      "denumire_comuna_ro": "Găină",
+      "common_name_en": "Chicken",
+      "latin_name": "Galliformes"
+    }
+  },
+  {
+    "type": "taxonomy",
+    "species": {
+      "ro": "PORUMBEL",
+      "en": "Pigeon",
+      "latin": "Columbidae"
+    },
+    "has_breeds": false,
+    "breeds": [],
+    "group_fields": {
+      "denumire_comuna_ro": "Porumbel",
+      "common_name_en": "Pigeon",
+      "latin_name": "Columbidae"
+    }
+  },
+  {
+    "type": "taxonomy",
+    "species": {
+      "ro": "PERUS",
+      "en": "Budgerigar",
+      "latin": "Melopsittacus undulatus"
+    },
+    "has_breeds": false,
+    "breeds": [],
+    "group_fields": {
+      "denumire_comuna_ro": "Peruș",
+      "common_name_en": "Budgerigar",
+      "latin_name": "Melopsittacus"
+    }
+  },
+  {
+    "type": "taxonomy",
+    "species": {
+      "ro": "PAPAGAL",
+      "en": "Parrot",
+      "latin": "Psittaciformes"
+    },
+    "has_breeds": false,
+    "breeds": [],
+    "group_fields": {
+      "denumire_comuna_ro": "Papagal (Generic)",
+      "common_name_en": "Parrot (Order)",
+      "latin_name": "Psittaciformes"
+    }
+  },
+  {
+    "type": "taxonomy",
+    "species": {
+      "ro": "PASARE RAPITOARE",
+      "en": "Bird of Prey",
+      "latin": "Accipitriformes"
+    },
+    "has_breeds": false,
+    "breeds": [],
+    "group_fields": {
+      "denumire_comuna_ro": "Pasăre Răpitoare (Generic)",
+      "common_name_en": "Bird of Prey / Raptor",
+      "latin_name": "Accipitriformes / Strigiformes"
+    }
+  },
+  {
+    "type": "taxonomy",
+    "species": {
+      "ro": "TESTOASA",
+      "en": "Turtle",
+      "latin": "Testudines"
+    },
+    "has_breeds": false,
+    "breeds": [],
+    "group_fields": {
+      "denumire_comuna_ro": "Țestoasă (Generic)",
+      "common_name_en": "Turtle / Tortoise (Order)",
+      "latin_name": "Testudines"
+    }
+  },
+  {
+    "type": "taxonomy",
+    "species": {
+      "ro": "TESTOASA DE CALIFORNIA",
+      "en": "Red-Eared Slider",
+      "latin": "Trachemys scripta elegans"
+    },
+    "has_breeds": false,
+    "breeds": []
+  },
+  {
+    "type": "taxonomy",
+    "species": {
+      "ro": "VIPERA",
+      "en": "Viper",
+      "latin": "Viperidae"
+    },
+    "has_breeds": false,
+    "breeds": [],
+    "group_fields": {
+      "denumire_comuna_ro": "Viperă (Generic)",
+      "common_name_en": "Viper (Family)",
+      "latin_name": "Viperidae"
+    }
+  },
+  {
+    "type": "taxonomy",
+    "species": {
+      "ro": "VIPERA AMMODYTES",
+      "en": "Horned Viper",
+      "latin": "Vipera ammodytes"
+    },
+    "has_breeds": false,
+    "breeds": []
+  },
+  {
+    "type": "taxonomy",
+    "species": {
+      "ro": "BOA",
+      "en": "Boa",
+      "latin": "Boidae"
+    },
+    "has_breeds": false,
+    "breeds": [],
+    "group_fields": {
+      "denumire_comuna_ro": "Boa (Generic)",
+      "common_name_en": "Boa (Family)",
+      "latin_name": "Boidae"
+    }
+  },
+  {
+    "type": "taxonomy",
+    "species": {
+      "ro": "SARPE",
+      "en": "Snake",
+      "latin": "Serpentes"
+    },
+    "has_breeds": false,
+    "breeds": [],
+    "group_fields": {
+      "denumire_comuna_ro": "Șarpe (Generic)",
+      "common_name_en": "Snake (Suborder)",
+      "latin_name": "Serpentes"
+    }
+  },
+  {
+    "type": "taxonomy",
+    "species": {
+      "ro": "SOPARLA",
+      "en": "Lizard",
+      "latin": "Lacertilia"
+    },
+    "has_breeds": false,
+    "breeds": [],
+    "group_fields": {
+      "denumire_comuna_ro": "Șopârlă (Generic)",
+      "common_name_en": "Lizard (Suborder)",
+      "latin_name": "Lacertilia"
+    }
+  },
+  {
+    "type": "taxonomy",
+    "species": {
+      "ro": "BROASCA",
+      "en": "Frog",
+      "latin": "Anura"
+    },
+    "has_breeds": false,
+    "breeds": [],
+    "group_fields": {
+      "denumire_comuna_ro": "Broască (Generic)",
+      "common_name_en": "Frog / Toad (Order)",
+      "latin_name": "Anura"
+    }
+  },
+  {
+    "type": "taxonomy",
+    "species": {
+      "ro": "TEGU",
+      "en": "Tegu",
+      "latin": "Teiidae"
+    },
+    "has_breeds": false,
+    "breeds": [],
+    "group_fields": {
+      "denumire_comuna_ro": "Tegu (Generic)",
+      "common_name_en": "Tegu (Family)",
+      "latin_name": "Teiidae"
+    }
+  },
+  {
+    "type": "taxonomy",
+    "species": {
+      "ro": "TEGU AUSTRALIAN",
+      "en": "Australian Tegu",
+      "latin": "Teiidae spp."
+    },
+    "has_breeds": false,
+    "breeds": []
+  },
+  {
+    "type": "taxonomy",
+    "species": {
+      "ro": "IGUANA VERDE",
+      "en": "Green Iguana",
+      "latin": "Iguana iguana"
+    },
+    "has_breeds": false,
+    "breeds": []
+  },
+  {
+    "type": "taxonomy",
+    "species": {
+      "ro": "UROMASTRYX",
+      "en": "Uromastyx / Spiny-Tailed Lizard",
+      "latin": "Uromastyx aegyptia"
+    },
+    "has_breeds": false,
+    "breeds": []
+  },
+  {
+    "type": "taxonomy",
+    "species": {
+      "ro": "TRITON",
+      "en": "Newt",
+      "latin": "Triturus vulgaris"
+    },
+    "has_breeds": false,
+    "breeds": []
+  },
+  {
+    "type": "taxonomy",
+    "species": {
+      "ro": "PESTE",
+      "en": "Fish",
+      "latin": "Actinopterygii"
+    },
+    "has_breeds": false,
+    "breeds": [],
+    "group_fields": {
+      "denumire_comuna_ro": "Pește (Generic)",
+      "common_name_en": "Fish (Class)",
+      "latin_name": "Actinopterygii"
+    }
+  },
+  {
+    "type": "taxonomy",
+    "species": {
+      "ro": "ARICI",
+      "en": "Hedgehog",
+      "latin": "Erinaceidae"
+    },
+    "has_breeds": false,
+    "breeds": [],
+    "group_fields": {
+      "denumire_comuna_ro": "Arici",
+      "common_name_en": "Hedgehog",
+      "latin_name": "Erinaceidae"
+    }
+  },
+  {
+    "type": "taxonomy",
+    "species": {
+      "ro": "CANGUR",
+      "en": "Kangaroo",
+      "latin": "Macropodidae"
+    },
+    "has_breeds": false,
+    "breeds": [],
+    "group_fields": {
+      "denumire_comuna_ro": "Cangur",
+      "common_name_en": "Kangaroo",
+      "latin_name": "Macropodidae"
+    }
+  },
+  {
+    "type": "taxonomy",
+    "species": {
+      "ro": "MAIMUTA",
+      "en": "Monkey",
+      "latin": "Primates"
+    },
+    "has_breeds": false,
+    "breeds": [],
+    "group_fields": {
+      "denumire_comuna_ro": "Maimuță",
+      "common_name_en": "Monkey / Primate",
+      "latin_name": "Primates"
+    }
+  },
+  {
+    "type": "taxonomy",
+    "species": {
+      "ro": "ELEFANT",
+      "en": "Elephant",
+      "latin": "Elephantidae"
+    },
+    "has_breeds": false,
+    "breeds": [],
+    "group_fields": {
+      "denumire_comuna_ro": "Elefant",
+      "common_name_en": "Elephant",
+      "latin_name": "Elephantidae"
+    }
+  },
+  {
+    "type": "taxonomy",
+    "species": {
+      "ro": "PINGUIN",
+      "en": "Penguin",
+      "latin": "Spheniscidae"
+    },
+    "has_breeds": false,
+    "breeds": [],
+    "group_fields": {
+      "denumire_comuna_ro": "Pinguin",
+      "common_name_en": "Penguin",
+      "latin_name": "Spheniscidae"
+    }
+  },
+  {
+    "type": "taxonomy",
+    "species": {
+      "ro": "ZIMBRU",
+      "en": "European Bison",
+      "latin": "Bison bonasus"
+    },
+    "has_breeds": false,
+    "breeds": [],
+    "group_fields": {
+      "denumire_comuna_ro": "Zimbru",
+      "common_name_en": "European Bison",
+      "latin_name": "Bison"
+    }
+  },
+  {
+    "type": "taxonomy",
+    "species": {
+      "ro": "LILIAC",
+      "en": "Bat",
+      "latin": "Chiroptera"
+    },
+    "has_breeds": false,
+    "breeds": [],
+    "group_fields": {
+      "denumire_comuna_ro": "Liliac (Generic)",
+      "common_name_en": "Bat (Order)",
+      "latin_name": "Chiroptera"
+    }
+  },
+  {
+    "type": "taxonomy",
+    "species": {
+      "ro": "DELFIN",
+      "en": "Dolphin",
+      "latin": "Delphinidae"
+    },
+    "has_breeds": false,
+    "breeds": [],
+    "group_fields": {
+      "denumire_comuna_ro": "Delfin",
+      "common_name_en": "Dolphin",
+      "latin_name": "Delphinidae"
+    }
+  },
+  {
+    "type": "taxonomy",
+    "species": {
+      "ro": "ALBINA",
+      "en": "Honey Bee",
+      "latin": "Apis mellifera"
+    },
+    "has_breeds": false,
+    "breeds": [],
+    "group_fields": {
+      "denumire_comuna_ro": "Albină",
+      "common_name_en": "Honey Bee",
+      "latin_name": "Apis"
+    }
+  },
+  {
+    "type": "taxonomy",
+    "species": {
+      "ro": "INSECTA",
+      "en": "Insect",
+      "latin": "Insecta"
+    },
+    "has_breeds": false,
+    "breeds": [],
+    "group_fields": {
+      "denumire_comuna_ro": "Insectă (Generic)",
+      "common_name_en": "Insect (Class)",
+      "latin_name": "Insecta"
+    }
+  }
+];
+
+        // --- 2. Application Logic ---
+        
+        // DOM Elements
+        const speciesSelect = document.getElementById('species');
+        const breedSelect = document.getElementById('breed');
+        const breedContainer = document.getElementById('breed-container');
+        const breedHint = document.getElementById('breed-hint');
+        const jsonPreview = document.getElementById('json-preview');
+        const validationMsg = document.getElementById('validation-msg');
+        
+        // Language Toggle Elements
+        const btnRo = document.getElementById('lang-ro');
+        const btnEn = document.getElementById('lang-en');
+        const lblSpecies = document.getElementById('label-species');
+        const lblBreed = document.getElementById('label-breed');
+        
+        // State
+        let currentLang = 'ro';
+        let selectedSpeciesData = null;
+        let selectedBreedData = null;
+
+        const translations = {
+            ro: {
+                specie: "Specie *",
+                rasa: "Rasă",
+                selSpecie: "-- Selectați specia --",
+                selRasa: "-- Selectați rasa --",
+                noRasa: "-- Specia nu necesită rasă --",
+                hint: "Vă rugăm să selectați rasa specifică.",
+                valid: "Date standardizate pregătite pentru DB",
+                waiting: "Așteptare selecție..."
+            },
+            en: {
+                specie: "Species *",
+                rasa: "Breed",
+                selSpecie: "-- Select species --",
+                selRasa: "-- Select breed --",
+                noRasa: "-- Species does not require breed --",
+                hint: "Please select the specific breed.",
+                valid: "Standardized data ready for DB",
+                waiting: "Awaiting selection..."
+            }
+        };
+
+        // Initialize UI
+        function init() {
+            populateSpecies();
+            setupEventListeners();
+            updateJSONPreview();
+        }
+
+        // Populate the primary species dropdown
+        function populateSpecies() {
+            // Sort data alphabetically by current language
+            const sortedData = [...taxonomyData].sort((a, b) => 
+                a.species[currentLang].localeCompare(b.species[currentLang])
+            );
+
+            speciesSelect.innerHTML = `<option value="" disabled selected>${translations[currentLang].selSpecie}</option>`;
+            
+            sortedData.forEach((item, index) => {
+                const option = document.createElement('option');
+                // Store the original index from the main array for easy lookup
+                const originalIndex = taxonomyData.indexOf(item);
+                option.value = originalIndex;
+                option.textContent = item.species[currentLang];
+                
+                // Keep selection if language changes
+                if (selectedSpeciesData && taxonomyData[originalIndex].species.ro === selectedSpeciesData.species.ro) {
+                    option.selected = true;
+                }
+                
+                speciesSelect.appendChild(option);
+            });
+        }
+
+        // Populate the breed dropdown based on selected species
+        function populateBreeds() {
+            if (!selectedSpeciesData || !selectedSpeciesData.has_breeds) {
+                // Disable breed selection
+                breedSelect.innerHTML = `<option value="" disabled selected>${translations[currentLang].noRasa}</option>`;
+                breedSelect.disabled = true;
+                breedSelect.classList.remove('bg-white', 'cursor-pointer');
+                breedSelect.classList.add('bg-gray-100', 'cursor-not-allowed');
+                breedContainer.classList.add('opacity-50');
+                breedHint.classList.add('hidden');
+                selectedBreedData = null; // Clear any previously selected breed
+                return;
+            }
+
+            // Enable breed selection
+            breedSelect.disabled = false;
+            breedSelect.classList.remove('bg-gray-100', 'cursor-not-allowed');
+            breedSelect.classList.add('bg-white', 'cursor-pointer');
+            breedContainer.classList.remove('opacity-50');
+            breedHint.classList.remove('hidden');
+            breedHint.textContent = translations[currentLang].hint;
+
+            // Sort breeds alphabetically
+            const sortedBreeds = [...selectedSpeciesData.breeds].sort((a, b) => 
+                a[currentLang].localeCompare(b[currentLang])
+            );
+
+            breedSelect.innerHTML = `<option value="" disabled selected>${translations[currentLang].selRasa}</option>`;
+            
+            sortedBreeds.forEach((breed, index) => {
+                const option = document.createElement('option');
+                // Store original breed index based on the main array
+                const originalIndex = selectedSpeciesData.breeds.indexOf(breed);
+                option.value = originalIndex;
+                option.textContent = breed[currentLang];
+                
+                // Keep selection if language changes
+                if (selectedBreedData && selectedSpeciesData.breeds[originalIndex].ro === selectedBreedData.ro) {
+                    option.selected = true;
+                }
+
+                breedSelect.appendChild(option);
+            });
+        }
+
+        // Update the JSON visualization panel
+        function updateJSONPreview() {
+            if (!selectedSpeciesData) {
+                jsonPreview.textContent = JSON.stringify({ stdTaxonomy: null }, null, 2);
+                validationMsg.textContent = translations[currentLang].waiting;
+                validationMsg.parentElement.classList.replace('bg-green-50', 'bg-yellow-50');
+                validationMsg.parentElement.classList.replace('text-green-600', 'text-yellow-600');
+                return;
+            }
+
+            // Build the object exactly as it will be saved to MongoDB
+            const outputObj = {
+                stdTaxonomy: {
+                    species: selectedSpeciesData.species,
+                    isValidated: true
+                }
+            };
+
+            // Handle breed logic
+            if (selectedSpeciesData.has_breeds) {
+                if (selectedBreedData) {
+                    outputObj.stdTaxonomy.breed = selectedBreedData;
+                } else {
+                    // Species requires breed, but none selected yet
+                    outputObj.stdTaxonomy.breed = { ro: "NECUNOSCUT", en: "UNKNOWN" };
+                    outputObj.stdTaxonomy.isValidated = false;
+                }
+            } else {
+                // Species does not have breeds (like Wolves, Bees)
+                outputObj.stdTaxonomy.breed = { ro: "N/A", en: "N/A" };
+            }
+
+            // Syntax highlight and display
+            jsonPreview.textContent = JSON.stringify(outputObj, null, 2);
+
+            // Update Validation UI
+            if (outputObj.stdTaxonomy.isValidated) {
+                validationMsg.textContent = translations[currentLang].valid;
+                validationMsg.parentElement.classList.replace('bg-yellow-50', 'bg-green-50');
+                validationMsg.parentElement.classList.replace('text-yellow-600', 'text-green-600');
+            } else {
+                validationMsg.textContent = translations[currentLang].hint;
+                validationMsg.parentElement.classList.replace('bg-green-50', 'bg-yellow-50');
+                validationMsg.parentElement.classList.replace('text-green-600', 'text-yellow-600');
+            }
+        }
+
+        // Set up all UI interactions
+        function setupEventListeners() {
+            // Species Dropdown Change
+            speciesSelect.addEventListener('change', (e) => {
+                selectedSpeciesData = taxonomyData[e.target.value];
+                selectedBreedData = null; // Reset breed when species changes
+                populateBreeds();
+                updateJSONPreview();
+            });
+
+            // Breed Dropdown Change
+            breedSelect.addEventListener('change', (e) => {
+                selectedBreedData = selectedSpeciesData.breeds[e.target.value];
+                updateJSONPreview();
+            });
+
+            // Language Toggles
+            btnRo.addEventListener('click', (e) => {
+                e.preventDefault();
+                setLanguage('ro');
+            });
+            
+            btnEn.addEventListener('click', (e) => {
+                e.preventDefault();
+                setLanguage('en');
+            });
+        }
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            
+            // UI Toggle Styles
+            if(lang === 'ro') {
+                btnRo.classList.replace('text-gray-500', 'text-blue-600');
+                btnRo.classList.replace('hover:text-gray-700', 'bg-white');
+                btnRo.classList.add('shadow-sm');
+                
+                btnEn.classList.replace('text-blue-600', 'text-gray-500');
+                btnEn.classList.replace('bg-white', 'hover:text-gray-700');
+                btnEn.classList.remove('shadow-sm');
+            } else {
+                btnEn.classList.replace('text-gray-500', 'text-blue-600');
+                btnEn.classList.replace('hover:text-gray-700', 'bg-white');
+                btnEn.classList.add('shadow-sm');
+                
+                btnRo.classList.replace('text-blue-600', 'text-gray-500');
+                btnRo.classList.replace('bg-white', 'hover:text-gray-700');
+                btnRo.classList.remove('shadow-sm');
+            }
+
+            // Update Labels
+            lblSpecies.textContent = translations[currentLang].specie;
+            lblBreed.textContent = translations[currentLang].rasa;
+            
+            if (!selectedSpeciesData) {
+                validationMsg.textContent = translations[currentLang].waiting;
+            } else if (selectedSpeciesData.has_breeds && !selectedBreedData) {
+                validationMsg.textContent = translations[currentLang].hint;
+            } else {
+                validationMsg.textContent = translations[currentLang].valid;
+            }
+
+            // Re-render dropdowns retaining selection
+            populateSpecies();
+            populateBreeds();
+        }
+
+        // Boot up
+        init();
+
+    </script>
+</body>
+</html>

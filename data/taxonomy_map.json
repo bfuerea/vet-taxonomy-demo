@@ -1,0 +1,78 @@
+{
+    "categories": {
+        "Câine / Canide": {
+            "latin": "Canidae", "rank": "family", "ro": "Câine / Canide", "en": "Dog / Canids",
+            "keywords": ["canis", "vulpes", "dog", "caine", "vulpe", "lup"],
+            "genera": ["Canis", "Vulpes", "Lycalopex", "Chrysocyon", "Otocyon", "Cuon", "Lycaon", "Atelocynus", "Cerdocyon", "Speothos", "Urocyon"]
+        },
+        "Pisică / Felide": {
+            "latin": "Felidae", "rank": "family", "ro": "Pisică / Felide", "en": "Cat / Felids",
+            "keywords": ["felis", "panthera", "cat", "pisica", "lion", "tiger"],
+            "genera": ["Felis", "Panthera", "Acinonyx", "Lynx", "Leopardus", "Leptailurus", "Caracal", "Puma", "Prionailurus", "Otocolobus", "Catopuma", "Pardofelis", "Neofelis"]
+        },
+        "Vită / Rumegătoare": {
+            "latin": "Artiodactyla", "rank": "order", "ro": "Vită / Rumegătoare", "en": "Cattle / Ruminants",
+            "keywords": ["bos", "bison", "cervus", "cow", "vaca", "cattle", "deer", "cerb"],
+            "genera": ["Bos", "Bison", "Bubalus", "Syncerus", "Cervus", "Dama", "Capreolus", "Alces", "Rangifer", "Giraffa", "Okapia", "Antilope", "Gazella", "Ovis", "Capra"]
+        },
+        "Porc": {
+            "latin": "Suidae", "rank": "family", "ro": "Porc / Suide", "en": "Pig / Suids",
+            "keywords": ["sus", "pig", "porc", "boar", "mistret"],
+            "genera": ["Sus", "Porcula", "Hylochoerus", "Potamochoerus", "Phacochoerus", "Babyrousa"]
+        },
+        "Oaie / Capră": {
+            "latin": "Bovidae", "rank": "family", "ro": "Oaie / Capră", "en": "Sheep / Goat",
+            "keywords": ["ovis", "capra", "oaie", "sheep", "goat"],
+            "genera": ["Ovis", "Capra", "Ammotragus", "Pseudois", "Budorcas", "Ovibos", "Rupicapra"]
+        },
+        "Cal / Ecvide": {
+            "latin": "Equidae", "rank": "family", "ro": "Cal / Ecvide", "en": "Horse / Equids",
+            "keywords": ["equus", "horse", "cal", "donkey", "zebra"],
+            "genera": ["Equus"]
+        },
+        "Iepure / Rozătoare": {
+            "latin": "Glires", "rank": "clade", "ro": "Iepure / Rozătoare", "en": "Rabbit / Rodents",
+            "keywords": ["mouse", "rat", "rabbit", "iepure", "soarece"],
+            "genera": ["Mus", "Rattus", "Cavia", "Lepus", "Oryctolagus", "Sylvilagus", "Sciurus", "Cricetus"]
+        },
+        "Păsări de curte": {
+            "latin": "Aves", "rank": "class", "ro": "Păsări de curte", "en": "Poultry",
+            "keywords": ["chicken", "duck", "goose", "gaina", "rata"],
+            "genera": ["Gallus", "Anas", "Anser", "Meleagris", "Numida", "Phasianus"]
+        }
+    },
+    "subcategories": {
+        "Dog": { "latin": "Canis lupus familiaris", "rank": "subspecies", "ro": "Câine", "en": "Dog", "genera": ["Canis"] },
+        "Wolf": { "latin": "Canis lupus", "rank": "species", "ro": "Lup", "en": "Wolf", "genera": ["Canis"] },
+        "Fox": { "latin": "Vulpes", "rank": "genus", "ro": "Vulpe", "en": "Fox", "genera": ["Vulpes", "Urocyon"] },
+        "Jackal": { "latin": "Canis", "rank": "genus", "ro": "Șacal", "en": "Jackal", "genera": ["Canis"] },
+        "Cat": { "latin": "Felis catus", "rank": "species", "ro": "Pisică", "en": "Cat", "genera": ["Felis"] },
+        "Cattle": { "latin": "Bos taurus", "rank": "species", "ro": "Vită / Vacă", "en": "Cattle", "genera": ["Bos"] },
+        "Cow": { "latin": "Bos taurus", "rank": "species", "ro": "Vacă", "en": "Cow", "genera": ["Bos"] },
+        "Bison": { "latin": "Bison", "rank": "genus", "ro": "Zimbru / Bison", "en": "Bison", "genera": ["Bison"] },
+        "Buffalo": { "latin": "Bubalus", "rank": "genus", "ro": "Bivol", "en": "Buffalo", "genera": ["Bubalus", "Syncerus"] },
+        "Deer": { "latin": "Cervidae", "rank": "family", "ro": "Căprioară / Cerb", "en": "Deer", "genera": ["Cervus", "Dama", "Capreolus", "Alces", "Rangifer"] },
+        "Giraffe": { "latin": "Giraffa", "rank": "genus", "ro": "Girafă", "en": "Giraffe", "genera": ["Giraffa"] },
+        "Antelope": { "latin": "Antilopinae", "rank": "subfamily", "ro": "Antilopă", "en": "Antelope", "genera": ["Antilope", "Gazella", "Eudorcas", "Nanger"] },
+        "Pig": { "latin": "Sus scrofa domesticus", "rank": "species", "ro": "Porc", "en": "Pig", "genera": ["Sus"] },
+        "Boar": { "latin": "Sus scrofa", "rank": "species", "ro": "Mistreț", "en": "Boar", "genera": ["Sus"] },
+        "Sheep": { "latin": "Ovis aries", "rank": "species", "ro": "Oaie", "en": "Sheep", "genera": ["Ovis"] },
+        "Goat": { "latin": "Capra hircus", "rank": "species", "ro": "Capră", "en": "Goat", "genera": ["Capra"] },
+        "Horse": { "latin": "Equus ferus caballus", "rank": "species", "ro": "Cal", "en": "Horse", "genera": ["Equus"] },
+        "Rabbit": { "latin": "Oryctolagus cuniculus", "rank": "species", "ro": "Iepure", "en": "Rabbit", "genera": ["Oryctolagus", "Lepus"] },
+        "Mouse": { "latin": "Mus musculus", "rank": "species", "ro": "Șoarece", "en": "Mouse", "genera": ["Mus"] },
+        "Rat": { "latin": "Rattus norvegicus", "rank": "species", "ro": "Șobolan", "en": "Rat", "genera": ["Rattus"] }
+    },
+    "rank_translations": {
+        "kingdom": "Regn", "phylum": "Încrengătură", "class": "Clasă", "order": "Ordin", "family": "Familie",
+        "subfamily": "Subfamilie", "genus": "Gen", "species": "Specie", "subspecies": "Subspecie", "clade": "Cladă"
+    },
+    "ui_translations": {
+        "gbif_key_label": { "ro": "CHEIE GBIF", "en": "GBIF KEY" },
+        "taxonomic_status_label": { "ro": "STATUT TAXONOMIC", "en": "TAXONOMIC STATUS" },
+        "verified": { "ro": "VERIFICAT", "en": "VERIFIED" },
+        "unverified": { "ro": "NEVERIFICAT", "en": "UNVERIFIED" },
+        "fetching": { "ro": "SE CAUTĂ...", "en": "FETCHING..." },
+        "no_match": { "ro": "FĂRĂ POTRIVIRE", "en": "NO MATCH" }
+    }
+}

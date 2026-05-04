@@ -1,0 +1,2622 @@
+[
+    {
+        "col_internal_id": "MYJ",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Acinonyx",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Carnivora",
+        "c_family": "Felidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Carnivora > Felidae",
+        "english_vernacular": "Not found",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "RKW",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Alces",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Artiodactyla",
+        "c_family": "Cervidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Artiodactyla > Cervidae",
+        "english_vernacular": "Old World elk, moose",
+        "romanian_vernacular": "Negăsit",
+        "has_breeds": true,
+        "breeds": [
+            {
+                "en": "Red Deer (European)",
+                "ro": "Cerb Comun (European)"
+            },
+            {
+                "en": "Red Deer (New Zealand Improved)",
+                "ro": "Cerb Roșu Selecționat"
+            },
+            {
+                "en": "Fallow Deer",
+                "ro": "Cerb Lopătar"
+            },
+            {
+                "en": "Elk (Wapiti)",
+                "ro": "Elk (Wapiti)"
+            },
+            {
+                "en": "White-tailed Deer",
+                "ro": "Cerb cu Coada Albă"
+            },
+            {
+                "en": "Sika Deer",
+                "ro": "Cerb Sika"
+            },
+            {
+                "en": "Axis Deer (Chital)",
+                "ro": "Cerb Axis"
+            }
+        ]
+    },
+    {
+        "col_internal_id": "TZ4",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Ammotragus",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Artiodactyla",
+        "c_family": "Bovidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Artiodactyla > Bovidae",
+        "english_vernacular": "Barbary sheep",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "V8R",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Anas",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Aves",
+        "c_order": "Anseriformes",
+        "c_family": "Anatidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Aves > Anseriformes > Anatidae",
+        "english_vernacular": "Dabbling Ducks",
+        "romanian_vernacular": "Negăsit",
+        "has_breeds": true,
+        "breeds": [
+            {
+                "en": "Aylesbury Duck",
+                "ro": "Rață de Aylesbury"
+            },
+            {
+                "en": "Cayuga Duck",
+                "ro": "Rață Cayuga"
+            },
+            {
+                "en": "Indian Runner",
+                "ro": "Alergătoare Indiană"
+            },
+            {
+                "en": "Muscovy Duck",
+                "ro": "Rață Leșească (Moscovită)"
+            },
+            {
+                "en": "Peking Duck",
+                "ro": "Rață Pekin"
+            },
+            {
+                "en": "Rouen Duck",
+                "ro": "Rață de Rouen"
+            }
+        ]
+    },
+    {
+        "col_internal_id": "X5D",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Anser",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Aves",
+        "c_order": "Anseriformes",
+        "c_family": "Anatidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Aves > Anseriformes > Anatidae",
+        "english_vernacular": "Bean Geese",
+        "romanian_vernacular": "Negăsit",
+        "has_breeds": true,
+        "breeds": [
+            {
+                "en": "African Goose",
+                "ro": "Gâscă Africană"
+            },
+            {
+                "en": "Chinese Goose",
+                "ro": "Gâscă Chinezească"
+            },
+            {
+                "en": "Emden Goose",
+                "ro": "Gâscă de Emden"
+            },
+            {
+                "en": "Romanian Common Goose",
+                "ro": "Gâscă Comună Românească"
+            },
+            {
+                "en": "Toulouse Goose",
+                "ro": "Gâscă de Toulouse"
+            }
+        ]
+    },
+    {
+        "col_internal_id": "62DF9",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Antilope",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Artiodactyla",
+        "c_family": "Bovidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Artiodactyla > Bovidae",
+        "english_vernacular": "blackbucks",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "34VK",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Atelocynus",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Carnivora",
+        "c_family": "Canidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Carnivora > Canidae",
+        "english_vernacular": "Not found",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "372D",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Babyrousa",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Artiodactyla",
+        "c_family": "Suidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Artiodactyla > Suidae",
+        "english_vernacular": "Not found",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "LV7Q6",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Bison",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Artiodactyla",
+        "c_family": "Bovidae",
+        "c_genus": "Bos",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Artiodactyla > Bovidae > Bos",
+        "english_vernacular": "Not found",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "3BQW",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Bos",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Artiodactyla",
+        "c_family": "Bovidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Artiodactyla > Bovidae",
+        "english_vernacular": "oxen, true cattle",
+        "romanian_vernacular": "Negăsit",
+        "has_breeds": true,
+        "breeds": [
+            {
+                "en": "Aberdeen Angus",
+                "ro": "Aberdeen Angus"
+            },
+            {
+                "en": "Ayrshire",
+                "ro": "Ayrshire"
+            },
+            {
+                "en": "Belgian Blue",
+                "ro": "Alb-Albastru Belgian"
+            },
+            {
+                "en": "Brown Swiss",
+                "ro": "Brună de Elveția"
+            },
+            {
+                "en": "Charolais",
+                "ro": "Charolaise"
+            },
+            {
+                "en": "Grey Steppe",
+                "ro": "Sura de Stepă"
+            },
+            {
+                "en": "Guernsey",
+                "ro": "Guernsey"
+            },
+            {
+                "en": "Hereford",
+                "ro": "Hereford"
+            },
+            {
+                "en": "Highland Cattle",
+                "ro": "Vacă de Scoția (Highland)"
+            },
+            {
+                "en": "Holstein-Friesian",
+                "ro": "Bălțată cu Negru (Holstein)"
+            },
+            {
+                "en": "Jersey",
+                "ro": "Jersey"
+            },
+            {
+                "en": "Limousin",
+                "ro": "Limousine"
+            },
+            {
+                "en": "Romanian Brown",
+                "ro": "Brună de Maramureș"
+            },
+            {
+                "en": "Romanian Spotted",
+                "ro": "Bălțată Românească"
+            },
+            {
+                "en": "Simmental",
+                "ro": "Simmental"
+            },
+            {
+                "en": "Wagyu",
+                "ro": "Wagyu"
+            }
+        ]
+    },
+    {
+        "col_internal_id": "62H57",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Bubalus",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Artiodactyla",
+        "c_family": "Bovidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Artiodactyla > Bovidae",
+        "english_vernacular": "water buffalos",
+        "romanian_vernacular": "Negăsit",
+        "has_breeds": true,
+        "breeds": [
+            {
+                "en": "Bulgarian Murrah",
+                "ro": "Bivol Murrah Bulgar"
+            },
+            {
+                "en": "Mediterranean Buffalo",
+                "ro": "Bivol Mediteranean"
+            },
+            {
+                "en": "Murrah Buffalo",
+                "ro": "Bivol Murrah"
+            },
+            {
+                "en": "Romanian Buffalo",
+                "ro": "Bivolul Românesc"
+            }
+        ]
+    },
+    {
+        "col_internal_id": "62GTK",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Budorcas",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Artiodactyla",
+        "c_family": "Bovidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Artiodactyla > Bovidae",
+        "english_vernacular": "Not found",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "3GTH",
+        "rank": "genus",
+        "status": "",
+        "scientific_name": "Canis",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Carnivora",
+        "c_family": "Canidae",
+        "c_genus": "Canis",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Carnivora > Canidae > Canis",
+        "english_vernacular": "dogs, foxes, jackals",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "3H56",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Capra",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Artiodactyla",
+        "c_family": "Bovidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Artiodactyla > Bovidae",
+        "english_vernacular": "goats",
+        "romanian_vernacular": "Negăsit",
+        "has_breeds": true,
+        "breeds": [
+            {
+                "en": "Alpine",
+                "ro": "Alpină"
+            },
+            {
+                "en": "Anglo-Nubian",
+                "ro": "Anglo-Nubiană"
+            },
+            {
+                "en": "Angora",
+                "ro": "Angora"
+            },
+            {
+                "en": "Boer",
+                "ro": "Boer"
+            },
+            {
+                "en": "Carpathian",
+                "ro": "Carpatină"
+            },
+            {
+                "en": "Saanen",
+                "ro": "Saanen"
+            },
+            {
+                "en": "White Banat",
+                "ro": "Alba de Banat"
+            }
+        ]
+    },
+    {
+        "col_internal_id": "3H5R",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Capreolus",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Artiodactyla",
+        "c_family": "Cervidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Artiodactyla > Cervidae",
+        "english_vernacular": "roe deer",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "3H8V",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Caracal",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Carnivora",
+        "c_family": "Felidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Carnivora > Felidae",
+        "english_vernacular": "Not found",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "3JKK",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Catopuma",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Carnivora",
+        "c_family": "Felidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Carnivora > Felidae",
+        "english_vernacular": "Not found",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "3JSH",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Cavia",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Rodentia",
+        "c_family": "Caviidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Rodentia > Caviidae",
+        "english_vernacular": "Not found",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "62JXJ",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Cerdocyon",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Carnivora",
+        "c_family": "Canidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Carnivora > Canidae",
+        "english_vernacular": "Not found",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "62K9X",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Cervus",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Artiodactyla",
+        "c_family": "Cervidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Artiodactyla > Cervidae",
+        "english_vernacular": "deer, red deer, wapiti",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "3PH6",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Chrysocyon",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Carnivora",
+        "c_family": "Canidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Carnivora > Canidae",
+        "english_vernacular": "Not found",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "3VTX",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Cricetus",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Rodentia",
+        "c_family": "Cricetidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Rodentia > Cricetidae",
+        "english_vernacular": "Not found",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "62PZT",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Cuon",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Carnivora",
+        "c_family": "Canidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Carnivora > Canidae",
+        "english_vernacular": "Not found",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "3ZMM",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Dama",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Artiodactyla",
+        "c_family": "Cervidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Artiodactyla > Cervidae",
+        "english_vernacular": "fallow deer",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "4DLP",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Equus",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Perissodactyla",
+        "c_family": "Equidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Perissodactyla > Equidae",
+        "english_vernacular": "Horses",
+        "romanian_vernacular": "Negăsit",
+        "has_breeds": true,
+        "breeds": [
+            {
+                "en": "Mule (General)",
+                "ro": "Catâr"
+            },
+            {
+                "en": "Hinny (General)",
+                "ro": "Bardou"
+            },
+            {
+                "en": "Poitou Mule",
+                "ro": "Mul de Poitou"
+            }
+        ]
+    },
+    {
+        "col_internal_id": "62TCY",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Eudorcas",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Artiodactyla",
+        "c_family": "Bovidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Artiodactyla > Bovidae",
+        "english_vernacular": "Not found",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "4JQ8",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Felis",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Carnivora",
+        "c_family": "Felidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Carnivora > Felidae",
+        "english_vernacular": "small cats",
+        "romanian_vernacular": "Negăsit",
+        "has_breeds": true,
+        "breeds": [
+            {
+                "en": "Abyssinian",
+                "ro": "Abisiniană"
+            },
+            {
+                "en": "American Bobtail",
+                "ro": "American Bobtail"
+            },
+            {
+                "en": "American Curl",
+                "ro": "American Curl"
+            },
+            {
+                "en": "American Shorthair",
+                "ro": "American Shorthair"
+            },
+            {
+                "en": "American Wirehair",
+                "ro": "American Wirehair"
+            },
+            {
+                "en": "Balinese",
+                "ro": "Balineză"
+            },
+            {
+                "en": "Bengal",
+                "ro": "Bengaleză"
+            },
+            {
+                "en": "Birman (Sacred Birman)",
+                "ro": "Birmaneză / Sacra de Birmania"
+            },
+            {
+                "en": "Bombay",
+                "ro": "Bombay"
+            },
+            {
+                "en": "British Shorthair",
+                "ro": "British Shorthair / Britanică (cu păr scurt)"
+            },
+            {
+                "en": "Burmese",
+                "ro": "Burmeza / Burmese"
+            },
+            {
+                "en": "Chartreux",
+                "ro": "Chartreux"
+            },
+            {
+                "en": "Colorpoint Shorthair",
+                "ro": "Colorpoint Shorthair"
+            },
+            {
+                "en": "Cornish Rex",
+                "ro": "Cornish Rex"
+            },
+            {
+                "en": "Devon Rex",
+                "ro": "Devon Rex"
+            },
+            {
+                "en": "Donskoy",
+                "ro": "Don Sphynx"
+            },
+            {
+                "en": "Egyptian Mau",
+                "ro": "Egyptian Mau"
+            },
+            {
+                "en": "European Burmese",
+                "ro": "European Burmese"
+            },
+            {
+                "en": "European Shorthair",
+                "ro": "Europeană"
+            },
+            {
+                "en": "Exotic Shorthair",
+                "ro": "Exotic Shorthair / Exotică (cu păr scurt)"
+            },
+            {
+                "en": "Havana Brown",
+                "ro": "Havana Brown"
+            },
+            {
+                "en": "Japanese Bobtail",
+                "ro": "Bobtail japonez"
+            },
+            {
+                "en": "Javanese",
+                "ro": "Javanese"
+            },
+            {
+                "en": "Korat",
+                "ro": "Korat"
+            },
+            {
+                "en": "LaPerm",
+                "ro": "Laperm"
+            },
+            {
+                "en": "Maine Coon",
+                "ro": "Maine Coon"
+            },
+            {
+                "en": "Manx",
+                "ro": "Manx"
+            },
+            {
+                "en": "Neva Masquerade",
+                "ro": "Neva Masquerade"
+            },
+            {
+                "en": "Norwegian Forest Cat",
+                "ro": "Norvegiană de pădure"
+            },
+            {
+                "en": "Ocicat",
+                "ro": "Ocicat"
+            },
+            {
+                "en": "Oriental",
+                "ro": "Orientală"
+            },
+            {
+                "en": "Oriental Shorthair",
+                "ro": "Orientală (cu păr scurt)"
+            },
+            {
+                "en": "Persian",
+                "ro": "Persană"
+            },
+            {
+                "en": "Peterbald",
+                "ro": "Peterbald"
+            },
+            {
+                "en": "Ragamuffin",
+                "ro": "Ragamuffin"
+            },
+            {
+                "en": "Ragdoll",
+                "ro": "Ragdoll"
+            },
+            {
+                "en": "Russian Blue",
+                "ro": "Albastru de Rusia"
+            },
+            {
+                "en": "Scottish Fold",
+                "ro": "Scottish Fold"
+            },
+            {
+                "en": "Selkirk Rex",
+                "ro": "Selkirk Rex"
+            },
+            {
+                "en": "Siamese",
+                "ro": "Siameză"
+            },
+            {
+                "en": "Siberian",
+                "ro": "Siberiană"
+            },
+            {
+                "en": "Singapura",
+                "ro": "Singapura"
+            },
+            {
+                "en": "Somali",
+                "ro": "Somali / Somaleză"
+            },
+            {
+                "en": "Sphynx",
+                "ro": "Sfinx / Sphynx"
+            },
+            {
+                "en": "Tonkinese",
+                "ro": "Tonkinese"
+            },
+            {
+                "en": "Transylvanian Cat",
+                "ro": "Pisica Transilvăneană"
+            },
+            {
+                "en": "Turkish Angora",
+                "ro": "Angora turcească"
+            },
+            {
+                "en": "Turkish Van",
+                "ro": "Van Turcească"
+            }
+        ]
+    },
+    {
+        "col_internal_id": "4LYQ",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Gallus",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Aves",
+        "c_order": "Galliformes",
+        "c_family": "Phasianidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Aves > Galliformes > Phasianidae",
+        "english_vernacular": "Junglefowl",
+        "romanian_vernacular": "Negăsit",
+        "has_breeds": true,
+        "breeds": [
+            {
+                "en": "Australorp",
+                "ro": "Australorp"
+            },
+            {
+                "en": "Brahma",
+                "ro": "Brahma"
+            },
+            {
+                "en": "Cochin",
+                "ro": "Cochin"
+            },
+            {
+                "en": "Cornish",
+                "ro": "Cornish"
+            },
+            {
+                "en": "Favereolles",
+                "ro": "Favereolles"
+            },
+            {
+                "en": "Hamburg",
+                "ro": "Hamburg"
+            },
+            {
+                "en": "Italian Leghorn",
+                "ro": "Leghorn (Italiană)"
+            },
+            {
+                "en": "Marans",
+                "ro": "Marans"
+            },
+            {
+                "en": "New Hampshire",
+                "ro": "New Hampshire"
+            },
+            {
+                "en": "Orpington",
+                "ro": "Orpington"
+            },
+            {
+                "en": "Plymouth Rock",
+                "ro": "Plymouth Rock"
+            },
+            {
+                "en": "Polish",
+                "ro": "Olandeză Moțată"
+            },
+            {
+                "en": "Rhode Island Red",
+                "ro": "Rhode Island"
+            },
+            {
+                "en": "Silkies",
+                "ro": "Mătăsoasă Japoneză"
+            },
+            {
+                "en": "Sussex",
+                "ro": "Sussex"
+            },
+            {
+                "en": "Transylvanian Naked Neck",
+                "ro": "Gât-Golaș de Transilvania"
+            },
+            {
+                "en": "Wyandotte",
+                "ro": "Wyandotte"
+            }
+        ]
+    },
+    {
+        "col_internal_id": "4MJB",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Gazella",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Artiodactyla",
+        "c_family": "Bovidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Artiodactyla > Bovidae",
+        "english_vernacular": "gazelles",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "4NM5",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Giraffa",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Artiodactyla",
+        "c_family": "Giraffidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Artiodactyla > Giraffidae",
+        "english_vernacular": "Not found",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "523H",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Hylochoerus",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Artiodactyla",
+        "c_family": "Suidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Artiodactyla > Suidae",
+        "english_vernacular": "Not found",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "5CC6",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Leopardus",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Carnivora",
+        "c_family": "Felidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Carnivora > Felidae",
+        "english_vernacular": "American spotted cats",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "62WXN",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Leptailurus",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Carnivora",
+        "c_family": "Felidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Carnivora > Felidae",
+        "english_vernacular": "Not found",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "5DJG",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Lepus",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Lagomorpha",
+        "c_family": "Leporidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Lagomorpha > Leporidae",
+        "english_vernacular": "Hares, Jack Rabbits, Jackrabbits",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "62XT4",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Lycalopex",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Carnivora",
+        "c_family": "Canidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Carnivora > Canidae",
+        "english_vernacular": "Not found",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "5HHF",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Lycaon",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Carnivora",
+        "c_family": "Canidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Carnivora > Canidae",
+        "english_vernacular": "Not found",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "5HR8",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Lynx",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Carnivora",
+        "c_family": "Felidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Carnivora > Felidae",
+        "english_vernacular": "bobcats, lynxes",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "5NN8",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Meleagris",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Aves",
+        "c_order": "Galliformes",
+        "c_family": "Phasianidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Aves > Galliformes > Phasianidae",
+        "english_vernacular": "Turkeys",
+        "romanian_vernacular": "Negăsit",
+        "has_breeds": true,
+        "breeds": [
+            {
+                "en": "Beltsville Small White",
+                "ro": "Curcan de Beltsville"
+            },
+            {
+                "en": "Broad Breasted White",
+                "ro": "Curcan Alb cu Pieptul Larg"
+            },
+            {
+                "en": "Narragansett Turkey",
+                "ro": "Curcan Narragansett"
+            },
+            {
+                "en": "Romanian Common Turkey",
+                "ro": "Curcan Comun Românesc"
+            }
+        ]
+    },
+    {
+        "col_internal_id": "5VV3",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Mus",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Rodentia",
+        "c_family": "Muridae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Rodentia > Muridae",
+        "english_vernacular": "House Mice, Old World Mice",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "5X9W",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Nanger",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Artiodactyla",
+        "c_family": "Bovidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Artiodactyla > Bovidae",
+        "english_vernacular": "Not found",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "5ZG5",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Neofelis",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Carnivora",
+        "c_family": "Felidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Carnivora > Felidae",
+        "english_vernacular": "Not found",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "9JLLF",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Numida",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Aves",
+        "c_order": "Galliformes",
+        "c_family": "Numididae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Aves > Galliformes > Numididae",
+        "english_vernacular": "Guineafowl",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "67H6",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Okapia",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Artiodactyla",
+        "c_family": "Giraffidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Artiodactyla > Giraffidae",
+        "english_vernacular": "Not found",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "63GYZ",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Oryctolagus",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Lagomorpha",
+        "c_family": "Leporidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Lagomorpha > Leporidae",
+        "english_vernacular": "Old World rabbits",
+        "romanian_vernacular": "Negăsit",
+        "has_breeds": true,
+        "breeds": [
+            {
+                "en": "Flemish Giant",
+                "ro": "Uriaș Belgian"
+            },
+            {
+                "en": "Giant Grey",
+                "ro": "Uriaș Sur"
+            },
+            {
+                "en": "Transylvanian Giant",
+                "ro": "Uriaș de Transilvania"
+            },
+            {
+                "en": "Californian",
+                "ro": "Californian"
+            },
+            {
+                "en": "Pannon White",
+                "ro": "Alb de Panonia"
+            },
+            {
+                "en": "Cluj Rabbit",
+                "ro": "Iepurele de Cluj"
+            },
+            {
+                "en": "Lionhead",
+                "ro": "Cap de Leu"
+            },
+            {
+                "en": "Angora",
+                "ro": "Angora"
+            },
+            {
+                "en": "Mini Lop",
+                "ro": "Berbec Pitic"
+            },
+            {
+                "en": "Dutch",
+                "ro": "Olandez"
+            },
+            {
+                "en": "Rex",
+                "ro": "Rex"
+            },
+            {
+                "en": "Himalayan",
+                "ro": "Himalayan"
+            },
+            {
+                "en": "New Zealand White",
+                "ro": "Neozeelandez Alb"
+            },
+            {
+                "en": "Checkered Giant",
+                "ro": "Uriaș Pestriț"
+            },
+            {
+                "en": "Netherland Dwarf",
+                "ro": "Pitic Olandez"
+            }
+        ]
+    },
+    {
+        "col_internal_id": "63HYL",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Otocolobus",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Carnivora",
+        "c_family": "Felidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Carnivora > Felidae",
+        "english_vernacular": "Not found",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "63HY3",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Otocyon",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Carnivora",
+        "c_family": "Canidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Carnivora > Canidae",
+        "english_vernacular": "Not found",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "6B4L",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Ovibos",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Artiodactyla",
+        "c_family": "Bovidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Artiodactyla > Bovidae",
+        "english_vernacular": "muskoxen",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "6B56",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Ovis",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Artiodactyla",
+        "c_family": "Bovidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Artiodactyla > Bovidae",
+        "english_vernacular": "sheep",
+        "romanian_vernacular": "Negăsit",
+        "has_breeds": true,
+        "breeds": [
+            {
+                "en": "Alcarreña",
+                "ro": "Alcarreña"
+            },
+            {
+                "en": "Ansotana",
+                "ro": "Ansotana"
+            },
+            {
+                "en": "Aranesa",
+                "ro": "Aranesa"
+            },
+            {
+                "en": "Assaf",
+                "ro": "Assaf"
+            },
+            {
+                "en": "Awassi",
+                "ro": "Awassi"
+            },
+            {
+                "en": "Berrichon du Cher",
+                "ro": "Berrichon du Cher"
+            },
+            {
+                "en": "Canaria",
+                "ro": "Canaria"
+            },
+            {
+                "en": "Canaria de Pelo",
+                "ro": "Canaria cu păr"
+            },
+            {
+                "en": "Carranzana",
+                "ro": "Carranzana"
+            },
+            {
+                "en": "Cartera",
+                "ro": "Cartera"
+            },
+            {
+                "en": "Castellana",
+                "ro": "Castellana"
+            },
+            {
+                "en": "Chamarita",
+                "ro": "Chamarita"
+            },
+            {
+                "en": "Charmoise",
+                "ro": "Charmoise"
+            },
+            {
+                "en": "Churra",
+                "ro": "Churra"
+            },
+            {
+                "en": "Churra Lebrijana",
+                "ro": "Churra Lebrijana"
+            },
+            {
+                "en": "Churra Tensina",
+                "ro": "Churra Tensina"
+            },
+            {
+                "en": "Colmenareña",
+                "ro": "Colmenareña"
+            },
+            {
+                "en": "Dorper",
+                "ro": "Dorper"
+            },
+            {
+                "en": "East Friesian",
+                "ro": "Oaie Frizonă de Est"
+            },
+            {
+                "en": "Fleischschaf",
+                "ro": "Merinos de Carne (Fleischschaf)"
+            },
+            {
+                "en": "Guirra",
+                "ro": "Guirra"
+            },
+            {
+                "en": "Île de France",
+                "ro": "Île de France"
+            },
+            {
+                "en": "Jacob Sheep",
+                "ro": "Oaie Jacob"
+            },
+            {
+                "en": "Karakul",
+                "ro": "Caracul"
+            },
+            {
+                "en": "Lacaune",
+                "ro": "Lacaune"
+            },
+            {
+                "en": "Landschaff",
+                "ro": "Landschaff"
+            },
+            {
+                "en": "Latxa",
+                "ro": "Latxa"
+            },
+            {
+                "en": "Lojeña",
+                "ro": "Lojeña"
+            },
+            {
+                "en": "Maellana",
+                "ro": "Maellana"
+            },
+            {
+                "en": "Manchega",
+                "ro": "Manchega"
+            },
+            {
+                "en": "Merino",
+                "ro": "Merinos"
+            },
+            {
+                "en": "Merina de Grazalema",
+                "ro": "Merinos de Grazalema"
+            },
+            {
+                "en": "Merino Precoz",
+                "ro": "Merinos Precoce"
+            },
+            {
+                "en": "Montesina",
+                "ro": "Montesina"
+            },
+            {
+                "en": "Navarra",
+                "ro": "Navarra"
+            },
+            {
+                "en": "Ojalada",
+                "ro": "Ojalada"
+            },
+            {
+                "en": "Ojinegra de Teruel",
+                "ro": "Ojinegra de Teruel"
+            },
+            {
+                "en": "Ovella Eivissenca",
+                "ro": "Oaie de Ibiza"
+            },
+            {
+                "en": "Ovella Galega",
+                "ro": "Oaie Galiciană"
+            },
+            {
+                "en": "Ovella Mallorquina",
+                "ro": "Oaie de Mallorca"
+            },
+            {
+                "en": "Ovella Menorquina",
+                "ro": "Oaie de Menorca"
+            },
+            {
+                "en": "Ovella Roja Mallorquina",
+                "ro": "Oaie Roșie de Mallorca"
+            },
+            {
+                "en": "Palmera",
+                "ro": "Palmera"
+            },
+            {
+                "en": "Rasa Aragonesa",
+                "ro": "Rasa Aragonesa"
+            },
+            {
+                "en": "Ripollesa",
+                "ro": "Ripollesa"
+            },
+            {
+                "en": "Roya Bilbilitana",
+                "ro": "Roya Bilbilitana"
+            },
+            {
+                "en": "Rubia del Molar",
+                "ro": "Rubia del Molar"
+            },
+            {
+                "en": "Salz",
+                "ro": "Salz"
+            },
+            {
+                "en": "Sasi Ardi",
+                "ro": "Sasi Ardi"
+            },
+            {
+                "en": "Segureña",
+                "ro": "Segureña"
+            },
+            {
+                "en": "Suffolk",
+                "ro": "Suffolk"
+            },
+            {
+                "en": "Talaverana",
+                "ro": "Talaverana"
+            },
+            {
+                "en": "Texel",
+                "ro": "Texel"
+            },
+            {
+                "en": "Tsigai",
+                "ro": "Țigaie"
+            },
+            {
+                "en": "Turcana",
+                "ro": "Țurcană"
+            },
+            {
+                "en": "Walachian sheep",
+                "ro": "Oaie Vlăhă"
+            },
+            {
+                "en": "Xalda",
+                "ro": "Xalda"
+            },
+            {
+                "en": "Xisqueta",
+                "ro": "Xisqueta"
+            }
+        ]
+    },
+    {
+        "col_internal_id": "6DBT",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Panthera",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Carnivora",
+        "c_family": "Felidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Carnivora > Felidae",
+        "english_vernacular": "roaring cats",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "6HK4",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Pardofelis",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Carnivora",
+        "c_family": "Felidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Carnivora > Felidae",
+        "english_vernacular": "Bay Cat",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "6MB2",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Phacochoerus",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Artiodactyla",
+        "c_family": "Suidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Artiodactyla > Suidae",
+        "english_vernacular": "warthogs",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "6MY8",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Phasianus",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Aves",
+        "c_order": "Galliformes",
+        "c_family": "Phasianidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Aves > Galliformes > Phasianidae",
+        "english_vernacular": "Pheasants",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "RY4WN",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Porcula",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Artiodactyla",
+        "c_family": "Suidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Artiodactyla > Suidae",
+        "english_vernacular": "Not found",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "6V5S",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Potamochoerus",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Artiodactyla",
+        "c_family": "Suidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Artiodactyla > Suidae",
+        "english_vernacular": "African bushpigs",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "6VR3",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Prionailurus",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Carnivora",
+        "c_family": "Felidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Carnivora > Felidae",
+        "english_vernacular": "Not found",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "72B5",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Pseudois",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Artiodactyla",
+        "c_family": "Bovidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Artiodactyla > Bovidae",
+        "english_vernacular": "Not found",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "75F9",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Puma",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Carnivora",
+        "c_family": "Felidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Carnivora > Felidae",
+        "english_vernacular": "pumas",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "773G",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Rangifer",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Artiodactyla",
+        "c_family": "Cervidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Artiodactyla > Cervidae",
+        "english_vernacular": "caribou, reindeer",
+        "romanian_vernacular": "Negăsit",
+        "has_breeds": true,
+        "breeds": [
+            {
+                "en": "Finnish Reindeer",
+                "ro": "Ren Finlandez"
+            },
+            {
+                "en": "Sami Reindeer",
+                "ro": "Renul Popoarelor Sami"
+            },
+            {
+                "en": "Chukotka Reindeer",
+                "ro": "Ren de Ciukotka"
+            }
+        ]
+    },
+    {
+        "col_internal_id": "63QK6",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Rattus",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Rodentia",
+        "c_family": "Muridae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Rodentia > Muridae",
+        "english_vernacular": "Old World Rats",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "7B68",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Rupicapra",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Artiodactyla",
+        "c_family": "Bovidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Artiodactyla > Bovidae",
+        "english_vernacular": "chamois",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "63TBP",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Sciurus",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Rodentia",
+        "c_family": "Sciuridae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Rodentia > Sciuridae",
+        "english_vernacular": "tree squirrels",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "63SGV",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Speothos",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Carnivora",
+        "c_family": "Canidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Carnivora > Canidae",
+        "english_vernacular": "Not found",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "7QGB",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Sus",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Artiodactyla",
+        "c_family": "Suidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Artiodactyla > Suidae",
+        "english_vernacular": "pigs",
+        "romanian_vernacular": "Negăsit",
+        "has_breeds": true,
+        "breeds": [
+            {
+                "en": "Bazna",
+                "ro": "Bazna"
+            },
+            {
+                "en": "Berkshire",
+                "ro": "Berkshire"
+            },
+            {
+                "en": "Duroc",
+                "ro": "Duroc"
+            },
+            {
+                "en": "Landrace",
+                "ro": "Landrace"
+            },
+            {
+                "en": "Large White",
+                "ro": "Marele Alb"
+            },
+            {
+                "en": "Mangalitsa",
+                "ro": "Mangalița"
+            },
+            {
+                "en": "Pietrain",
+                "ro": "Pietrain"
+            }
+        ]
+    },
+    {
+        "col_internal_id": "7QR2",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Sylvilagus",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Lagomorpha",
+        "c_family": "Leporidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Lagomorpha > Leporidae",
+        "english_vernacular": "Cottontails",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "7R4F",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Syncerus",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Artiodactyla",
+        "c_family": "Bovidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Artiodactyla > Bovidae",
+        "english_vernacular": "Not found",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "8583",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Urocyon",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Carnivora",
+        "c_family": "Canidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Carnivora > Canidae",
+        "english_vernacular": "gray foxes",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "87C5",
+        "rank": "",
+        "status": "",
+        "scientific_name": "Vulpes",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Carnivora",
+        "c_family": "Canidae",
+        "c_genus": "",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Carnivora > Canidae",
+        "english_vernacular": "kit foxes, red foxes",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "QLXL",
+        "rank": "species",
+        "status": "",
+        "scientific_name": "Canis lupus familiaris",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Carnivora",
+        "c_family": "Canidae",
+        "c_genus": "Canis",
+        "c_species": "Canis lupus familiaris",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Carnivora > Canidae > Canis > Canis lupus familiaris",
+        "english_vernacular": "Gray Wolf, Wolf",
+        "romanian_vernacular": "Negăsit",
+        "generic_category": "Câine / Canide",
+        "generic_subcategory": "Dog",
+        "generic_en": "Dog",
+        "generic_ro": "CAINE",
+        "has_breeds": true,
+        "breeds": [
+            {
+                "ro": "Affenpinscher",
+                "en": "Affenpinscher"
+            },
+            {
+                "ro": "Ainu",
+                "en": "Ainu Dog"
+            },
+            {
+                "ro": "Airedale Terrier",
+                "en": "Airedale Terrier"
+            },
+            {
+                "ro": "Akita Inu",
+                "en": "Akita Inu"
+            },
+            {
+                "ro": "Malamut de Alaska",
+                "en": "Alaskan Malamute"
+            },
+            {
+                "ro": "Alopekis",
+                "en": "Alopekis"
+            },
+            {
+                "ro": "Eskimo American",
+                "en": "American Eskimo"
+            },
+            {
+                "ro": "Pit Bull Terrier American",
+                "en": "American Pit Bull Terrier"
+            },
+            {
+                "ro": "American Staffordshire Terrier",
+                "en": "American Staffordshire Terrier"
+            },
+            {
+                "ro": "Ciobănesc de Anatolia",
+                "en": "Anatolian Shepherd Dog"
+            },
+            {
+                "ro": "Basset Artésien-Normand",
+                "en": "Artesian-Norman Basset"
+            },
+            {
+                "ro": "Azawakh",
+                "en": "Azawakh"
+            },
+            {
+                "ro": "Barbet",
+                "en": "Barbet"
+            },
+            {
+                "ro": "Basenji",
+                "en": "Basenji"
+            },
+            {
+                "ro": "Basset Hound",
+                "en": "Basset Hound"
+            },
+            {
+                "ro": "Beagle",
+                "en": "Beagle"
+            },
+            {
+                "ro": "Bearded Collie",
+                "en": "Bearded Collie"
+            },
+            {
+                "ro": "Beauceron",
+                "en": "Beauceron"
+            },
+            {
+                "ro": "Ciobănesc belgian",
+                "en": "Belgian Shepherd Dog"
+            },
+            {
+                "ro": "Ciobănesc de Berna",
+                "en": "Bernese Mountain Dog"
+            },
+            {
+                "ro": "Bichon",
+                "en": "Bichon"
+            },
+            {
+                "ro": "Bichon Frisé",
+                "en": "Bichon Frise"
+            },
+            {
+                "ro": "Bloodhound",
+                "en": "Bloodhound"
+            },
+            {
+                "ro": "Bobtail",
+                "en": "Bobtail (Old English Sheepdog)"
+            },
+            {
+                "ro": "Bichon bolognez",
+                "en": "Bolognese"
+            },
+            {
+                "ro": "Border Collie",
+                "en": "Border Collie"
+            },
+            {
+                "ro": "Barzoi (Ogar rusesc)",
+                "en": "Borzoi"
+            },
+            {
+                "ro": "Boston Terrier",
+                "en": "Boston Terrier"
+            },
+            {
+                "ro": "Boxer",
+                "en": "Boxer"
+            },
+            {
+                "ro": "Briard",
+                "en": "Briard"
+            },
+            {
+                "ro": "Bull Terrier",
+                "en": "Bull Terrier"
+            },
+            {
+                "ro": "Bullmastiff",
+                "en": "Bullmastiff"
+            },
+            {
+                "ro": "Cairn terrier",
+                "en": "Cairn Terrier"
+            },
+            {
+                "ro": "Cane Corso",
+                "en": "Cane Corso"
+            },
+            {
+                "ro": "Ciobănesc caucazian",
+                "en": "Caucasian Shepherd Dog"
+            },
+            {
+                "ro": "Chihuahua",
+                "en": "Chihuahua"
+            },
+            {
+                "ro": "Chinook",
+                "en": "Chinook"
+            },
+            {
+                "ro": "Chow chow",
+                "en": "Chow Chow"
+            },
+            {
+                "ro": "Cocker Spaniel",
+                "en": "Cocker Spaniel"
+            },
+            {
+                "ro": "Dalmațian",
+                "en": "Dalmation"
+            },
+            {
+                "ro": "Dandie Dinmont Terrier",
+                "en": "Dandie Dinmont Terrier"
+            },
+            {
+                "ro": "Dobermann",
+                "en": "Doberman Pinscher"
+            },
+            {
+                "ro": "Dog argentinian",
+                "en": "Dogo Argentino"
+            },
+            {
+                "ro": "Dog de Bordeaux",
+                "en": "Dogue de Bordeaux"
+            },
+            {
+                "ro": "Bulldog englez",
+                "en": "English Bulldog"
+            },
+            {
+                "ro": "Setter englez",
+                "en": "English Setter"
+            },
+            {
+                "ro": "Basset roșcat de Bretania",
+                "en": "Fawn Brittany Basset"
+            },
+            {
+                "ro": "Lapphund finlandez",
+                "en": "Finnish Lapphund"
+            },
+            {
+                "ro": "Foxterier",
+                "en": "Fox Terrier"
+            },
+            {
+                "ro": "Foxterier cu păr neted",
+                "en": "Fox Terrier (Smooth)"
+            },
+            {
+                "ro": "Foxterier sârmos",
+                "en": "Fox Terrier (Wire)"
+            },
+            {
+                "ro": "Bulldog francez",
+                "en": "French Bulldog"
+            },
+            {
+                "ro": "Jagdterrier",
+                "en": "German Hunting Terrier"
+            },
+            {
+                "ro": "Ciobănesc german",
+                "en": "German Shepherd Dog"
+            },
+            {
+                "ro": "Brac german",
+                "en": "German Shorthaired Pointer"
+            },
+            {
+                "ro": "Schnauzer uriaș",
+                "en": "Giant Schnauzer"
+            },
+            {
+                "ro": "Golden Retriever",
+                "en": "Golden Retriever"
+            },
+            {
+                "ro": "Setter Gordon",
+                "en": "Gordon Setter"
+            },
+            {
+                "ro": "Dog german",
+                "en": "Great Dane"
+            },
+            {
+                "ro": "Ogar englez",
+                "en": "Greyhound"
+            },
+            {
+                "ro": "Ogar maghiar",
+                "en": "Hungarian Greyhound"
+            },
+            {
+                "ro": "Ogar de Ibiza",
+                "en": "Ibizan Hound"
+            },
+            {
+                "ro": "Terrier irlandez",
+                "en": "Irish Terrier"
+            },
+            {
+                "ro": "Ogar irlandez",
+                "en": "Irish Wolfhound"
+            },
+            {
+                "ro": "Brac italian",
+                "en": "Italian Pointing Dog"
+            },
+            {
+                "ro": "Jack Russell Terrier",
+                "en": "Jack Russell Terrier"
+            },
+            {
+                "ro": "Jindo",
+                "en": "Jindo"
+            },
+            {
+                "ro": "Terrier Kerry Blue",
+                "en": "Kerry Blue Terrier"
+            },
+            {
+                "ro": "Komondor",
+                "en": "Komondor"
+            },
+            {
+                "ro": "Kuvasz",
+                "en": "Kuvasz"
+            },
+            {
+                "ro": "Labrador / Labrador Retriever",
+                "en": "Labrador Retriever"
+            },
+            {
+                "ro": "Lagotto Romagnolo",
+                "en": "Lagotto Romagnolo"
+            },
+            {
+                "ro": "Lakeland Foxhound",
+                "en": "Lakeland Foxhound"
+            },
+            {
+                "ro": "Lakeland terrier",
+                "en": "Lakeland Terrier"
+            },
+            {
+                "ro": "Landseer",
+                "en": "Landseer"
+            },
+            {
+                "ro": "Leonberger",
+                "en": "Leonberger"
+            },
+            {
+                "ro": "Lhasa Apso",
+                "en": "Lhasa Apso"
+            },
+            {
+                "ro": "Malinois",
+                "en": "Malinois"
+            },
+            {
+                "ro": "Bichon maltez",
+                "en": "Maltese"
+            },
+            {
+                "ro": "Pinscher pitic",
+                "en": "Miniature Pinscher"
+            },
+            {
+                "ro": "Schnauzer pitic",
+                "en": "Miniature Schnauzer"
+            },
+            {
+                "ro": "Terra Nova",
+                "en": "Newfoundland Dog"
+            },
+            {
+                "ro": "Buhund norvegian",
+                "en": "Norwegian Buhund"
+            },
+            {
+                "ro": "Pechinez",
+                "en": "Pekingese"
+            },
+            {
+                "ro": "Perro fino Colombiano",
+                "en": "Perro Fino Colombiano"
+            },
+            {
+                "ro": "Petit Basset Griffon Vendéen",
+                "en": "Petit Basset Griffon Vendéen"
+            },
+            {
+                "ro": "Pitbull",
+                "en": "Pitbull"
+            },
+            {
+                "ro": "Pomeranian",
+                "en": "Pomeranian"
+            },
+            {
+                "ro": "Pudel",
+                "en": "Poodle"
+            },
+            {
+                "ro": "Mops / Pug",
+                "en": "Pug"
+            },
+            {
+                "ro": "Rhodesian Ridgeback",
+                "en": "Rhodesian Ridgeback"
+            },
+            {
+                "ro": "Ciobănesc Românesc de Bucovina",
+                "en": "Romanian Bucovina Shepherd Dog"
+            },
+            {
+                "ro": "Ciobănesc Românesc Carpatin",
+                "en": "Romanian Carpathian Shepherd Dog"
+            },
+            {
+                "ro": "Bichon Havanez",
+                "en": "Romanian Havanese"
+            },
+            {
+                "ro": "Ciobănesc Românesc Mioritic",
+                "en": "Romanian Mioritic Shepherd Dog"
+            },
+            {
+                "ro": "Ciobănesc Românesc Corb",
+                "en": "Romanian Raven Shepherd Dog"
+            },
+            {
+                "ro": "Ciobănesc românesc",
+                "en": "Romanian Shepherd Dog"
+            },
+            {
+                "ro": "Rottweiler",
+                "en": "Rottweiler"
+            },
+            {
+                "ro": "Collie cu păr lung",
+                "en": "Rough Collie"
+            },
+            {
+                "ro": "Saint-Bernard",
+                "en": "Saint Bernard"
+            },
+            {
+                "ro": "Saluki",
+                "en": "Saluki"
+            },
+            {
+                "ro": "Samoed",
+                "en": "Samoyed"
+            },
+            {
+                "ro": "Ciobănesc sărăcăcian",
+                "en": "Sarakatsan Dog"
+            },
+            {
+                "ro": "Copoi",
+                "en": "Scenthound"
+            },
+            {
+                "ro": "Sealyham terrier",
+                "en": "Sealyham Terrier"
+            },
+            {
+                "ro": "Shar Pei",
+                "en": "Shar Pei"
+            },
+            {
+                "ro": "Ciobănesc de Shetland",
+                "en": "Shetland Sheepdog"
+            },
+            {
+                "ro": "Husky siberian",
+                "en": "Siberian Husky"
+            },
+            {
+                "ro": "Skye terrier",
+                "en": "Skye Terrier"
+            },
+            {
+                "ro": "Sloughi",
+                "en": "Sloughi"
+            },
+            {
+                "ro": "Spitz",
+                "en": "Spitz"
+            },
+            {
+                "ro": "Lapphund suedez",
+                "en": "Swedish Lapphund"
+            },
+            {
+                "ro": "Teckel",
+                "en": "Teckel (Dachshund)"
+            },
+            {
+                "ro": "Terrier",
+                "en": "Terrier"
+            },
+            {
+                "ro": "Copoi ardelenesc",
+                "en": "Transylvanian Hound"
+            },
+            {
+                "ro": "West Highland White Terrier",
+                "en": "West Highland White Terrier"
+            },
+            {
+                "ro": "Ciobănesc alb elvețian",
+                "en": "White Swiss Shepherd Dog"
+            },
+            {
+                "ro": "Yorkshire Terrier",
+                "en": "Yorkshire Terrier"
+            }
+        ]
+    },
+    {
+        "col_internal_id": "373V4",
+        "rank": "species",
+        "status": "",
+        "scientific_name": "Dogania subplana",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Reptilia",
+        "c_order": "Testudines",
+        "c_family": "Trionychidae",
+        "c_genus": "Dogania",
+        "c_species": "Dogania subplana",
+        "breadcrumb": "Animalia > Chordata > Reptilia > Testudines > Trionychidae > Dogania > Dogania subplana",
+        "english_vernacular": "Malayan Soft-shelled Turtle",
+        "romanian_vernacular": "Negăsit",
+        "generic_category": "Câine / Canide",
+        "generic_subcategory": "Dog",
+        "generic_en": "Malayan Soft-shelled Turtle",
+        "generic_ro": "MALAYAN SOFT-SHELLED TURTLE",
+        "has_breeds": false,
+        "breeds": []
+    },
+    {
+        "col_internal_id": "43YHD",
+        "rank": "species",
+        "status": "",
+        "scientific_name": "Molossops temminckii",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Chiroptera",
+        "c_family": "Molossidae",
+        "c_genus": "Molossops",
+        "c_species": "Molossops temminckii",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Chiroptera > Molossidae > Molossops > Molossops temminckii",
+        "english_vernacular": "Dwarf Dog-faced Bat",
+        "romanian_vernacular": "Negăsit",
+        "generic_category": "Câine / Canide",
+        "generic_subcategory": "Dog",
+        "generic_en": "Dwarf Dog-faced Bat",
+        "generic_ro": "DWARF DOG-FACED BAT",
+        "has_breeds": false,
+        "breeds": []
+    },
+    {
+        "col_internal_id": "43YHB",
+        "rank": "species",
+        "status": "",
+        "scientific_name": "Molossops neglectus",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Chiroptera",
+        "c_family": "Molossidae",
+        "c_genus": "Molossops",
+        "c_species": "Molossops neglectus",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Chiroptera > Molossidae > Molossops > Molossops neglectus",
+        "english_vernacular": "Rufous Dog-faced Bat",
+        "romanian_vernacular": "Negăsit",
+        "generic_category": "Câine / Canide",
+        "generic_subcategory": "Dog",
+        "generic_en": "Rufous Dog-Faced Bat",
+        "generic_ro": "RUFOUS DOG-FACED BAT",
+        "has_breeds": false,
+        "breeds": []
+    },
+    {
+        "col_internal_id": "6BW82",
+        "rank": "species",
+        "status": "",
+        "scientific_name": "Cynomops mexicanus",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Chiroptera",
+        "c_family": "Molossidae",
+        "c_genus": "Cynomops",
+        "c_species": "Cynomops mexicanus",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Chiroptera > Molossidae > Cynomops > Cynomops mexicanus",
+        "english_vernacular": "Mexican Dog-faced Bat",
+        "romanian_vernacular": "Negăsit",
+        "generic_category": "Câine / Canide",
+        "generic_subcategory": "Dog",
+        "generic_en": "Mexican Dog-faced Bat",
+        "generic_ro": "MEXICAN DOG-FACED BAT",
+        "has_breeds": false,
+        "breeds": []
+    },
+    {
+        "col_internal_id": "3YKT",
+        "rank": "genus",
+        "status": "",
+        "scientific_name": "Cynomops",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Chiroptera",
+        "c_family": "Molossidae",
+        "c_genus": "Cynomops",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Chiroptera > Molossidae > Cynomops",
+        "english_vernacular": "Not found",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "47CT",
+        "rank": "genus",
+        "status": "",
+        "scientific_name": "Dogania",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Reptilia",
+        "c_order": "Testudines",
+        "c_family": "Trionychidae",
+        "c_genus": "Dogania",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Reptilia > Testudines > Trionychidae > Dogania",
+        "english_vernacular": "Not found",
+        "romanian_vernacular": "Negăsit"
+    },
+    {
+        "col_internal_id": "63BL4",
+        "rank": "genus",
+        "status": "",
+        "scientific_name": "Molossops",
+        "authorship": "",
+        "c_kingdom": "Animalia",
+        "c_phylum": "Chordata",
+        "c_class": "Mammalia",
+        "c_order": "Chiroptera",
+        "c_family": "Molossidae",
+        "c_genus": "Molossops",
+        "c_species": "",
+        "breadcrumb": "Animalia > Chordata > Mammalia > Chiroptera > Molossidae > Molossops",
+        "english_vernacular": "Not found",
+        "romanian_vernacular": "Negăsit"
+    }
+]

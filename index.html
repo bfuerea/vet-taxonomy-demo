@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A showcase dashboard for Veterinary Pathology taxonomy tools and GBIF integration.">
+    <title>Pathology Tools Showcase</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #3b82f6;
+            --accent-hover: #60a5fa;
+            --accent-glow: rgba(59, 130, 246, 0.5);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            overflow: hidden;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(59, 130, 246, 0.15), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(16, 185, 129, 0.15), transparent 25%);
+            animation: bgShift 20s ease-in-out infinite alternate;
+        }
+
+        @keyframes bgShift {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 100% 100%; }
+        }
+
+        .dashboard {
+            display: flex;
+            width: 100vw;
+            height: 100vh;
+            padding: 1.5rem;
+            gap: 1.5rem;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            width: 320px;
+            display: flex;
+            flex-direction: column;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            z-index: 10;
+        }
+
+        .logo-area {
+            margin-bottom: 3rem;
+        }
+
+        .logo-area h1 {
+            font-size: 1.75rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .logo-area p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        /* Search Input */
+        .search-container {
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.85rem;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: var(--accent);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        /* Scrollable Menu */
+        .nav-items {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            flex-grow: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-right: 0.25rem;
+            scrollbar-width: thin;
+            scrollbar-color: var(--glass-border) transparent;
+        }
+
+        .nav-items::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .nav-items::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .nav-items::-webkit-scrollbar-thumb {
+            background: var(--glass-border);
+            border-radius: 4px;
+        }
+
+        .nav-items::-webkit-scrollbar-thumb:hover {
+            background: var(--accent);
+        }
+
+        /* Menu Category Labels */
+        .menu-category {
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            padding: 0.5rem 0.25rem 0.25rem;
+            margin-top: 0.5rem;
+        }
+
+        .menu-category:first-child {
+            margin-top: 0;
+        }
+
+        .nav-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-item.hidden {
+            display: none;
+        }
+
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 4px; height: 100%;
+            background: var(--accent);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+            transform-origin: bottom;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -10px rgba(0,0,0,0.3);
+        }
+
+        .nav-item.active {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .nav-item.active::before {
+            transform: scaleY(1);
+        }
+
+        .nav-item h2 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            line-height: 1.3;
+        }
+
+        .nav-item p {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* No Results Message */
+        .no-results {
+            text-align: center;
+            padding: 2rem 1rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            display: none;
+        }
+
+        .no-results.visible {
+            display: block;
+        }
+
+        /* Main Content Styling */
+        .main-content {
+            flex-grow: 1;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .content-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0,0,0,0.2);
+        }
+
+        .content-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+        
+        .header-actions button {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .header-actions button:hover {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+        }
+
+        .iframe-container {
+            flex-grow: 1;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background: #f3f4f6; /* Default background for apps like Attempt 1 */
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background-color: transparent;
+            transition: opacity 0.3s ease;
+        }
+
+        iframe.loading {
+            opacity: 0;
+        }
+
+        /* Loader */
+        .loader-wrapper {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 5;
+        }
+
+        .loader-wrapper.active {
+            opacity: 1;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(0,0,0,0.1);
+            border-radius: 50%;
+            border-top-color: var(--accent);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            body {
+                overflow-y: auto;
+            }
+            .dashboard {
+                flex-direction: column;
+                padding: 1rem;
+                height: 100dvh;
+            }
+            .sidebar {
+                width: 100%;
+                height: auto;
+                padding: 1.25rem;
+                flex-direction: column;
+                gap: 1rem;
+                flex-shrink: 0;
+            }
+            .logo-area {
+                margin-bottom: 0.5rem;
+                width: 100%;
+            }
+            .nav-items {
+                flex-direction: row;
+                overflow-x: auto;
+                padding-bottom: 0.5rem;
+                scroll-snap-type: x mandatory;
+                -webkit-overflow-scrolling: touch;
+            }
+            .nav-items::-webkit-scrollbar {
+                height: 4px;
+            }
+            .nav-items::-webkit-scrollbar-track {
+                background: rgba(255, 255, 255, 0.05);
+                border-radius: 4px;
+            }
+            .nav-items::-webkit-scrollbar-thumb {
+                background: rgba(255, 255, 255, 0.2);
+                border-radius: 4px;
+            }
+            .nav-item {
+                flex: 0 0 280px;
+                min-width: 280px;
+                scroll-snap-align: start;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="logo-area">
+                <h1>Taxonomy Lab</h1>
+                <p>A unified showcase dashboard for veterinary pathology taxonomy tools and services.</p>
+            </div>
+
+            <!-- Search Input -->
+            <div class="search-container">
+                <svg class="search-icon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+                <input type="text" class="search-input" id="menu-search" placeholder="Search demos...">
+            </div>
+
+            <!-- Scrollable Menu -->
+            <div class="nav-items" id="nav-items-container">
+                <!-- Category: Taxonomy Dashboards -->
+                <div class="menu-category">Taxonomy Dashboards</div>
+
+                <div class="nav-item active" data-src="combined_demo_v5.html" data-title="Taxonomy Dashboard V5">
+                    <h2>
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                        Taxonomy Dashboard V5
+                    </h2>
+                    <p>ChecklistBank Integration & Unified Search with clickable breadcrumb taxonomy links.</p>
+                </div>
+
+                <div class="nav-item" data-src="combined_demo_v3.html" data-title="Taxonomy Dashboard V3">
+                    <h2>
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                        Taxonomy Dashboard V3
+                    </h2>
+                    <p>Rank Filtering (Darwin Core). Rezolvă conflictele taxonomice și suportă selecții generice.</p>
+                </div>
+
+                <div class="nav-item" data-src="combined_demo_v2.html" data-title="Taxonomy Dashboard V2">
+                    <h2>
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                        Taxonomy Dashboard V2
+                    </h2>
+                    <p>Sistem ierarhic human-centric pentru selecția rapidă a speciilor (Categorie > Grup > Specie).</p>
+                </div>
+
+                <!-- Category: GBIF Tools -->
+                <div class="menu-category">GBIF Tools</div>
+
+                <div class="nav-item" data-src="combined_demo.html" data-title="Unified GBIF Standardizer">
+                    <h2>
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        Unified GBIF Standardizer
+                    </h2>
+                    <p>Enter cases and automatically fetch official GBIF taxonomy keys for MongoDB storage.</p>
+                </div>
+
+                <div class="nav-item" data-src="gbif_api_demo.html" data-title="GBIF Species Explorer">
+                    <h2>
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        GBIF Explorer
+                    </h2>
+                    <p>Search and validate species names against the Global Biodiversity Information Facility.</p>
+                </div>
+
+                <div class="nav-item" data-src="gbif_live_lookup.html" data-title="GBIF Live Lookup">
+                    <h2>
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
+                        GBIF Live Lookup
+                    </h2>
+                    <p>Direct API search with Google Translate integration for local names.</p>
+                </div>
+
+                <!-- Category: Utilities -->
+                <div class="menu-category">Utilities</div>
+
+                <div class="nav-item" data-src="attempt1.html" data-title="Taxonomy Standardized Demo">
+                    <h2>
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                        Taxonomy Standardizer
+                    </h2>
+                    <p>Enter cases and preview MongoDB standardized taxonomy structures.</p>
+                </div>
+
+                <div class="nav-item" data-src="col_simple_demo.html" data-title="CoL Taxonomy Search">
+                    <h2>
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path></svg>
+                        CoL Taxonomy Search
+                    </h2>
+                    <p>Simple species search using ChecklistBank API with Romanian translations from local data.</p>
+                </div>
+
+                <!-- No Results Message -->
+                <div class="no-results" id="no-results">
+                    <p>No demos found matching your search.</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Workspace -->
+        <main class="main-content">
+            <div class="content-header">
+                <div class="content-title" id="current-title">Taxonomy Dashboard V5</div>
+                <div class="header-actions">
+                    <button onclick="openInNewTab()">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        Open isolated
+                    </button>
+                </div>
+            </div>
+            
+            <div class="iframe-container">
+                <div class="loader-wrapper active" id="loader">
+                    <div class="spinner"></div>
+                    <div style="color: #666; font-size: 0.9rem; margin-top: 10px;">Loading application...</div>
+                </div>
+                <iframe id="app-frame" src="combined_demo_v5.html" class="loading" title="Application Frame"></iframe>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const navItems = document.querySelectorAll('.nav-item');
+        const iframe = document.getElementById('app-frame');
+        const currentTitle = document.getElementById('current-title');
+        const loader = document.getElementById('loader');
+        const searchInput = document.getElementById('menu-search');
+        const noResults = document.getElementById('no-results');
+        const navContainer = document.getElementById('nav-items-container');
+        const menuCategories = document.querySelectorAll('.menu-category');
+
+        let currentSrc = 'combined_demo_v5.html';
+
+        // Navigation click handler
+        navItems.forEach(item => {
+            item.addEventListener('click', () => {
+                // Update active state
+                navItems.forEach(nav => nav.classList.remove('active'));
+                item.classList.add('active');
+
+                // Get new source and title
+                const src = item.getAttribute('data-src');
+                const title = item.getAttribute('data-title');
+
+                if (src !== currentSrc) {
+                    currentSrc = src;
+                    currentTitle.textContent = title;
+                    
+                    // Show loader and hide iframe
+                    loader.classList.add('active');
+                    iframe.classList.add('loading');
+                    
+                    // Small delay to make the transition feel smoother
+                    setTimeout(() => {
+                        iframe.src = src;
+                    }, 300);
+                }
+            });
+        });
+
+        // Handle iframe load event
+        iframe.addEventListener('load', () => {
+            loader.classList.remove('active');
+            iframe.classList.remove('loading');
+        });
+
+        // Search functionality
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            let visibleCount = 0;
+            let visibleCategories = new Set();
+
+            // First pass: check which items match and which categories have matches
+            navItems.forEach(item => {
+                const title = item.getAttribute('data-title').toLowerCase();
+                const description = item.querySelector('p').textContent.toLowerCase();
+                const matches = !query || title.includes(query) || description.includes(query);
+                
+                if (matches) {
+                    item.classList.remove('hidden');
+                    visibleCount++;
+                } else {
+                    item.classList.add('hidden');
+                }
+            });
+
+            // Second pass: show/hide categories based on whether they have visible items
+            menuCategories.forEach((category, index) => {
+                let hasVisibleItems = false;
+                let nextElement = category.nextElementSibling;
+                
+                while (nextElement && !nextElement.classList.contains('menu-category')) {
+                    if (nextElement.classList.contains('nav-item') && !nextElement.classList.contains('hidden')) {
+                        hasVisibleItems = true;
+                        break;
+                    }
+                    nextElement = nextElement.nextElementSibling;
+                }
+                
+                if (hasVisibleItems || !query) {
+                    category.style.display = 'block';
+                } else {
+                    category.style.display = 'none';
+                }
+            });
+
+            // Show/hide no results message
+            if (query && visibleCount === 0) {
+                noResults.classList.add('visible');
+            } else {
+                noResults.classList.remove('visible');
+            }
+        });
+
+        // Open in new tab
+        function openInNewTab() {
+            window.open(currentSrc, '_blank');
+        }
+    </script>
+</body>
+</html>

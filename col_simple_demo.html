@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoL Taxonomy Search - Romanian Species</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; }
+        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        .animate-fade-in { animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .loading-spinner { animation: spin 1s linear infinite; }
+        .species-item { padding: 12px 16px; border-radius: 12px; border: 1px solid rgba(51, 65, 85, 0.5); transition: all 0.2s; cursor: pointer; }
+        .species-item:hover { background-color: rgba(30, 41, 59, 0.8); border-color: #475569; }
+        .species-item.active { background-color: rgba(37, 99, 235, 0.2); border-color: #3b82f6; }
+        .category-btn { padding: 10px 16px; border-radius: 10px; font-size: 11px; font-weight: bold; text-transform: uppercase; transition: all 0.2s; cursor: pointer; border: 1px solid; }
+        .category-btn:hover { transform: translateY(-1px); }
+        .category-btn.active { background: #2563eb; border-color: #3b82f6; color: white; }
+        .category-btn:not(.active) { background: rgba(30, 41, 59, 0.5); border-color: #334155; color: #94a3b8; }
+        .category-btn:not(.active):hover { background: rgba(51, 65, 85, 0.8); border-color: #475569; color: #e2e8f0; }
+    </style>
+</head>
+<body class="min-h-screen p-4 lg:p-8">
+    <div class="max-w-6xl mx-auto space-y-6">
+        
+        <!-- Header -->
+        <header class="flex justify-between items-center glass p-6 rounded-3xl">
+            <div>
+                <h1 class="text-2xl font-bold text-white">CoL Taxonomy Search</h1>
+                <p class="text-slate-500 text-sm">Specii cu traduceri în română din ChecklistBank</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="flex glass rounded-xl p-1 border border-slate-700">
+                    <button id="btn-ro" class="px-4 py-1.5 rounded-lg bg-blue-600 text-white text-sm">RO</button>
+                    <button id="btn-en" class="px-4 py-1.5 rounded-lg text-slate-400 text-sm">EN</button>
+                </div>
+            </div>
+        </header>
+
+        <main class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- Left Panel: Category Selection & Species List -->
+            <div class="lg:col-span-7 flex flex-col gap-4">
+                
+                <!-- Category Selection -->
+                <section class="glass p-5 rounded-3xl">
+                    <div class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-3">
+                        Pasul 1: Selectează Categoria
+                    </div>
+                    <div id="category-grid" class="flex flex-wrap gap-2">
+                        <!-- Categories populated by JS -->
+                    </div>
+                </section>
+
+                <!-- Species List -->
+                <section id="species-panel" class="glass p-5 rounded-3xl flex-grow flex flex-col min-h-[400px] hidden animate-fade-in">
+                    <div class="flex justify-between items-center mb-4">
+                        <div class="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                            Pasul 2: Specii Disponibile
+                        </div>
+                        <span id="species-count" class="text-[10px] text-slate-500 font-mono"></span>
+                    </div>
+                    
+                    <!-- Search Input -->
+                    <div class="relative mb-4">
+                        <input 
+                            type="text" 
+                            id="species-search" 
+                            placeholder="Filtrează în listă..."
+                            class="w-full bg-slate-900 border border-slate-700 rounded-xl px-10 py-3 text-sm text-white outline-none focus:ring-2 focus:ring-blue-500" 
+                            autocomplete="off"
+                        >
+                        <svg class="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                        <button id="clear-search" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-500 hover:text-white hidden">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Loading Indicator -->
+                    <div id="loading-indicator" class="hidden flex items-center justify-center py-8">
+                        <div class="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full loading-spinner mr-3"></div>
+                        <span class="text-slate-400 text-sm">Se caută în CoL...</span>
+                    </div>
+
+                    <!-- Species List -->
+                    <div id="species-list" class="space-y-2 custom-scrollbar flex-grow overflow-y-auto max-h-[500px]"></div>
+                </section>
+            </div>
+
+            <!-- Right Panel: Details & JSON Preview -->
+            <div class="lg:col-span-5 flex flex-col gap-4">
+                
+                <!-- Details Card -->
+                <section class="glass p-6 rounded-3xl">
+                    <div id="details-empty" class="flex flex-col items-center justify-center h-48 text-center text-slate-500">
+                        <svg class="w-12 h-12 mb-3 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        <p class="text-sm">Selectați o specie pentru detalii</p>
+                    </div>
+                    
+                    <div id="details-content" class="hidden space-y-5">
+                        <div class="space-y-2">
+                            <h3 id="view-scientific-name" class="text-xl font-bold text-white italic"></h3>
+                            <div class="flex flex-wrap gap-2">
+                                <span id="view-rank" class="px-2 py-1 bg-blue-900/30 text-blue-300 rounded-lg text-[10px] font-bold uppercase"></span>
+                                <span id="view-col-id" class="px-2 py-1 bg-slate-800 text-slate-400 rounded-lg text-[10px] font-mono"></span>
+                            </div>
+                        </div>
+
+                        <!-- Vernacular Names -->
+                        <div class="grid grid-cols-2 gap-3 pt-4 border-t border-slate-800">
+                            <div>
+                                <div class="text-[10px] font-bold text-slate-500 uppercase mb-1">English</div>
+                                <div id="view-vernacular-en" class="text-sm text-white"></div>
+                            </div>
+                            <div>
+                                <div class="text-[10px] font-bold text-slate-500 uppercase mb-1">Română</div>
+                                <div id="view-vernacular-ro" class="text-sm text-white font-semibold text-emerald-400"></div>
+                            </div>
+                        </div>
+
+                        <!-- Classification -->
+                        <div class="pt-4 border-t border-slate-800">
+                            <div class="text-[10px] font-bold text-slate-500 uppercase mb-2">Clasificare</div>
+                            <div id="view-classification" class="text-xs text-slate-400 space-y-1"></div>
+                        </div>
+
+                        <!-- Link to CoL -->
+                        <a id="view-col-link" href="#" target="_blank" class="flex items-center gap-2 text-xs text-blue-400 hover:text-blue-300">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                            </svg>
+                            Vezi în ChecklistBank →
+                        </a>
+                    </div>
+                </section>
+
+                <!-- JSON Export -->
+                <section class="glass rounded-3xl flex-grow overflow-hidden flex flex-col">
+                    <div class="p-3 border-b border-slate-800 flex justify-between items-center">
+                        <h3 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">JSON Export</h3>
+                        <div class="flex gap-2">
+                            <button id="btn-copy" class="text-[10px] text-blue-400 uppercase font-bold hover:text-blue-300">Copy</button>
+                            <button id="btn-download" class="text-[10px] text-green-400 uppercase font-bold hover:text-green-300">Download</button>
+                        </div>
+                    </div>
+                    <pre id="json-preview" class="p-4 text-[10px] font-mono text-emerald-400 overflow-auto custom-scrollbar flex-grow">// Selectați o specie</pre>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2"></div>
+
+    <script>
+        // ── Configuration ─────────────────────────────────────────────────────────
+        const COL_BASE_URL = 'https://www.checklistbank.org/dataset/3LR/taxon';
+        
+        // ── State ─────────────────────────────────────────────────────────────────
+        let taxonomySeed = [];
+        let taxonomyMap = {};
+        let lang = 'ro';
+        let selectedCategory = null;
+        let selectedSpecies = null;
+        let colCache = new Map();
+        let searchTimeout = null;
+
+        // ── UI Utilities ──────────────────────────────────────────────────────────
+        function showToast(msg, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const bg = type === 'success' ? 'bg-emerald-600' : type === 'error' ? 'bg-red-600' : 'bg-blue-600';
+            toast.className = `toast ${bg} text-white px-4 py-3 rounded-lg shadow-lg text-sm font-medium animate-fade-in`;
+            toast.textContent = msg;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        // ── Initialization ────────────────────────────────────────────────────────
+        async function init() {
+            try {
+                // Data files are always in the data/ subdirectory relative to this HTML file
+                const seedUrl = './data/taxonomy_seed.json';
+                const mapUrl = './data/taxonomy_map.json';
+
+                const [seedRes, mapRes] = await Promise.all([
+                    fetch(seedUrl),
+                    fetch(mapUrl)
+                ]);
+
+                if (!seedRes.ok) {
+                    throw new Error(`Failed to load taxonomy_seed.json (Status: ${seedRes.status}, URL: ${seedUrl})`);
+                }
+                if (!mapRes.ok) {
+                    throw new Error(`Failed to load taxonomy_map.json (Status: ${mapRes.status}, URL: ${mapUrl})`);
+                }
+
+                taxonomySeed = await seedRes.json();
+                taxonomyMap = await mapRes.json();
+
+                // Build a lookup map for fast access
+                taxonomySeed.forEach(entry => {
+                    const latin = entry.species.latin.toLowerCase();
+                    entry._searchKey = latin;
+                });
+
+                populateCategories();
+                setupEventHandlers();
+                showToast('Aplicația a fost încărcată cu succes', 'success');
+            } catch (e) {
+                console.error(e);
+                showToast(`Eroare: ${e.message}`, 'error');
+            }
+        }
+
+        // ── Category Population ───────────────────────────────────────────────────
+        function populateCategories() {
+            const grid = document.getElementById('category-grid');
+            grid.innerHTML = '';
+
+            Object.entries(taxonomyMap.categories).forEach(([catKey, catData]) => {
+                const btn = document.createElement('button');
+                const label = lang === 'ro' ? catData.ro : catData.en;
+
+                btn.className = 'category-btn';
+                btn.dataset.category = catKey;
+                btn.innerHTML = `
+                    <div class="flex flex-col items-start">
+                        <span>${label}</span>
+                        <span class="text-[9px] opacity-70 font-normal normal-case">${catData.latin}</span>
+                    </div>
+                `;
+                btn.onclick = () => selectCategory(catKey, btn);
+                grid.appendChild(btn);
+            });
+        }
+
+        function selectCategory(catKey, btnElement) {
+            selectedCategory = catKey;
+            selectedSpecies = null;
+
+            // Update UI
+            document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+            btnElement.classList.add('active');
+
+            // Show species panel
+            document.getElementById('species-panel').classList.remove('hidden');
+            clearDetails();
+
+            // Fetch species from CoL API
+            fetchColSpecies(catKey);
+        }
+
+        // ── CoL API Integration ───────────────────────────────────────────────────
+        async function fetchColSpecies(categoryKey) {
+            const list = document.getElementById('species-list');
+            const loading = document.getElementById('loading-indicator');
+            const count = document.getElementById('species-count');
+
+            list.innerHTML = '';
+            loading.classList.remove('hidden');
+            count.textContent = '';
+
+            const catData = taxonomyMap.categories[categoryKey];
+            const genera = catData.genera || [];
+
+            if (genera.length === 0) {
+                loading.classList.add('hidden');
+                list.innerHTML = '<div class="text-center text-slate-500 py-8">Nu există genuri definite pentru această categorie</div>';
+                return;
+            }
+
+            try {
+                // Search CoL for each genus
+                const allResults = [];
+                
+                for (const genus of genera) {
+                    // Check cache first
+                    if (colCache.has(genus.toLowerCase())) {
+                        allResults.push(...colCache.get(genus.toLowerCase()));
+                        continue;
+                    }
+
+                    const response = await fetch(
+                        `https://api.checklistbank.org/dataset/3LR/nameUsage/search?q=${encodeURIComponent(genus)}&limit=200&rank=species`
+                    );
+
+                    if (!response.ok) continue;
+
+                    const data = await response.json();
+                    const results = data.results || [];
+                    
+                    colCache.set(genus.toLowerCase(), results);
+                    allResults.push(...results);
+                }
+
+                // Filter: only show species that exist in taxonomy_seed.json
+                const matchedSpecies = allResults.filter(colTaxon => {
+                    const latin = colTaxon.scientificName.toLowerCase();
+                    return taxonomySeed.some(seed => seed._searchKey === latin);
+                });
+
+                // Remove duplicates by scientific name
+                const uniqueSpecies = matchedSpecies.filter((v, i, a) => 
+                    a.findIndex(t => t.scientificName === v.scientificName) === i
+                );
+
+                loading.classList.add('hidden');
+                count.textContent = `${uniqueSpecies.length} specii cu traducere RO`;
+
+                if (uniqueSpecies.length === 0) {
+                    list.innerHTML = '<div class="text-center text-slate-500 py-8">Nu s-au găsit specii cu traduceri în română pentru această categorie</div>';
+                    return;
+                }
+
+                renderSpeciesList(uniqueSpecies);
+
+            } catch (e) {
+                console.error(e);
+                loading.classList.add('hidden');
+                list.innerHTML = '<div class="text-center text-red-400 py-8">Eroare la conectarea cu CoL API</div>';
+            }
+        }
+
+        function renderSpeciesList(species, filter = '') {
+            const list = document.getElementById('species-list');
+            list.innerHTML = '';
+
+            const filtered = filter
+                ? species.filter(s => s.scientificName.toLowerCase().includes(filter.toLowerCase()))
+                : species;
+
+            if (filtered.length === 0) {
+                list.innerHTML = '<div class="text-center text-slate-500 py-8">Nicio potrivire pentru căutarea ta</div>';
+                return;
+            }
+
+            // Sort alphabetically
+            filtered.sort((a, b) => a.scientificName.localeCompare(b.scientificName));
+
+            filtered.forEach(taxon => {
+                const seedEntry = taxonomySeed.find(s => s._searchKey === taxon.scientificName.toLowerCase());
+                const roName = seedEntry ? seedEntry.species.ro : '—';
+
+                const div = document.createElement('div');
+                div.className = `species-item bg-slate-900/50 ${selectedSpecies?.usageKey === taxon.usageKey ? 'active' : ''}`;
+
+                div.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <div class="font-bold text-white text-sm italic">${taxon.scientificName}</div>
+                            <div class="text-[10px] text-emerald-400">${roName}</div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 bg-slate-800 text-slate-400 rounded text-[9px] font-mono">${taxon.rank || 'species'}</span>
+                        </div>
+                    </div>
+                `;
+
+                div.onclick = () => selectSpecies(taxon, seedEntry);
+                list.appendChild(div);
+            });
+        }
+
+        // ── Species Selection ─────────────────────────────────────────────────────
+        function selectSpecies(colTaxon, seedEntry) {
+            selectedSpecies = colTaxon;
+
+            // Update UI
+            document.querySelectorAll('.species-item').forEach(el => el.classList.remove('active'));
+            event?.currentTarget?.classList.add('active');
+
+            updateDetailsPanel(colTaxon, seedEntry);
+            updateExport(colTaxon, seedEntry);
+        }
+
+        function clearDetails() {
+            document.getElementById('details-empty').classList.remove('hidden');
+            document.getElementById('details-content').classList.add('hidden');
+            document.getElementById('json-preview').textContent = '// Selectați o specie';
+        }
+
+        function updateDetailsPanel(colTaxon, seedEntry) {
+            document.getElementById('details-empty').classList.add('hidden');
+            document.getElementById('details-content').classList.remove('hidden');
+
+            document.getElementById('view-scientific-name').textContent = colTaxon.scientificName;
+            document.getElementById('view-rank').textContent = (colTaxon.rank || 'species').toUpperCase();
+            document.getElementById('view-col-id').textContent = colTaxon.usageKey || 'N/A';
+
+            // Vernacular names
+            document.getElementById('view-vernacular-en').textContent = seedEntry ? seedEntry.species.en : '—';
+            document.getElementById('view-vernacular-ro').textContent = seedEntry ? seedEntry.species.ro : '—';
+
+            // Classification
+            const classification = document.getElementById('view-classification');
+            classification.innerHTML = `
+                <div>Kingdom: ${colTaxon.kingdom || '—'}</div>
+                <div>Phylum: ${colTaxon.phylum || '—'}</div>
+                <div>Class: ${colTaxon.class || '—'}</div>
+                <div>Order: ${colTaxon.order || '—'}</div>
+                <div>Family: ${colTaxon.family || '—'}</div>
+                <div>Genus: ${colTaxon.genus || '—'}</div>
+            `;
+
+            // CoL Link
+            const link = document.getElementById('view-col-link');
+            link.href = `${COL_BASE_URL}/${colTaxon.usageKey}`;
+        }
+
+        function updateExport(colTaxon, seedEntry) {
+            const exportObj = {
+                species: seedEntry ? seedEntry.species : {
+                    ro: '—',
+                    en: colTaxon.scientificName,
+                    latin: colTaxon.scientificName
+                },
+                has_breeds: seedEntry ? seedEntry.has_breeds : false,
+                breeds: seedEntry ? seedEntry.breeds : [],
+                col_info: {
+                    usageKey: colTaxon.usageKey,
+                    rank: colTaxon.rank,
+                    kingdom: colTaxon.kingdom,
+                    phylum: colTaxon.phylum,
+                    class: colTaxon.class,
+                    order: colTaxon.order,
+                    family: colTaxon.family,
+                    genus: colTaxon.genus,
+                    col_url: `${COL_BASE_URL}/${colTaxon.usageKey}`
+                },
+                timestamp: new Date().toISOString()
+            };
+
+            document.getElementById('json-preview').textContent = JSON.stringify(exportObj, null, 4);
+        }
+
+        // ── Event Handlers ────────────────────────────────────────────────────────
+        function setupEventHandlers() {
+            // Species search
+            const searchInput = document.getElementById('species-search');
+            searchInput.addEventListener('input', (e) => {
+                clearTimeout(searchTimeout);
+                const query = e.target.value.trim();
+                document.getElementById('clear-search').classList.toggle('hidden', !query);
+
+                if (!selectedCategory) return;
+
+                searchTimeout = setTimeout(() => {
+                    // Re-render with filter
+                    const loading = document.getElementById('loading-indicator');
+                    if (!loading.classList.contains('hidden')) return;
+
+                    // Get current species from cache
+                    const catData = taxonomyMap.categories[selectedCategory];
+                    const genera = catData.genera || [];
+                    const allResults = [];
+
+                    genera.forEach(genus => {
+                        if (colCache.has(genus.toLowerCase())) {
+                            allResults.push(...colCache.get(genus.toLowerCase()));
+                        }
+                    });
+
+                    const matchedSpecies = allResults.filter(colTaxon => {
+                        const latin = colTaxon.scientificName.toLowerCase();
+                        return taxonomySeed.some(seed => seed._searchKey === latin);
+                    });
+
+                    const uniqueSpecies = matchedSpecies.filter((v, i, a) =>
+                        a.findIndex(t => t.scientificName === v.scientificName) === i
+                    );
+
+                    renderSpeciesList(uniqueSpecies, query);
+                }, 200);
+            });
+
+            document.getElementById('clear-search').onclick = () => {
+                searchInput.value = '';
+                document.getElementById('clear-search').classList.add('hidden');
+                searchInput.focus();
+
+                if (selectedCategory) {
+                    const catData = taxonomyMap.categories[selectedCategory];
+                    const genera = catData.genera || [];
+                    const allResults = [];
+
+                    genera.forEach(genus => {
+                        if (colCache.has(genus.toLowerCase())) {
+                            allResults.push(...colCache.get(genus.toLowerCase()));
+                        }
+                    });
+
+                    const matchedSpecies = allResults.filter(colTaxon => {
+                        const latin = colTaxon.scientificName.toLowerCase();
+                        return taxonomySeed.some(seed => seed._searchKey === latin);
+                    });
+
+                    const uniqueSpecies = matchedSpecies.filter((v, i, a) =>
+                        a.findIndex(t => t.scientificName === v.scientificName) === i
+                    );
+
+                    renderSpeciesList(uniqueSpecies);
+                }
+            };
+
+            // Export buttons
+            document.getElementById('btn-copy').onclick = () => {
+                navigator.clipboard.writeText(document.getElementById('json-preview').textContent);
+                showToast('JSON copiat în clipboard!', 'success');
+            };
+
+            document.getElementById('btn-download').onclick = () => {
+                const blob = new Blob([document.getElementById('json-preview').textContent], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `species-${selectedSpecies?.usageKey || 'export'}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+                showToast('JSON descărcat!', 'success');
+            };
+
+            // Language toggle
+            document.getElementById('btn-ro').onclick = () => {
+                lang = 'ro';
+                updateLangUI();
+            };
+
+            document.getElementById('btn-en').onclick = () => {
+                lang = 'en';
+                updateLangUI();
+            };
+        }
+
+        function updateLangUI() {
+            document.getElementById('btn-ro').className = lang === 'ro'
+                ? 'px-4 py-1.5 rounded-lg bg-blue-600 text-white text-sm'
+                : 'px-4 py-1.5 rounded-lg text-slate-400 text-sm';
+            document.getElementById('btn-en').className = lang === 'en'
+                ? 'px-4 py-1.5 rounded-lg bg-blue-600 text-white text-sm'
+                : 'px-4 py-1.5 rounded-lg text-slate-400 text-sm';
+
+            // Re-populate categories
+            populateCategories();
+
+            // Re-fetch if category selected
+            if (selectedCategory) {
+                const btn = document.querySelector(`[data-category="${selectedCategory}"]`);
+                if (btn) {
+                    btn.classList.add('active');
+                    fetchColSpecies(selectedCategory);
+                }
+            }
+        }
+
+        // ── Start ─────────────────────────────────────────────────────────────────
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

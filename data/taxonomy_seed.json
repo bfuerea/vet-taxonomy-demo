@@ -1,0 +1,460 @@
+[
+    {
+        "species": {
+            "ro": "CAINE",
+            "en": "Dog",
+            "latin": "Canis lupus familiaris"
+        },
+        "has_breeds": true,
+        "breeds": [
+            {
+                "ro": "RASA COMUNA",
+                "en": "Mixed Breed"
+            },
+            {
+                "ro": "METIS",
+                "en": "Mixed Breed"
+            },
+            {
+                "ro": "CIOBANESC GERMAN",
+                "en": "German Shepherd"
+            },
+            {
+                "ro": "CANICHE",
+                "en": "Poodle"
+            },
+            {
+                "ro": "COCKER",
+                "en": "Cocker Spaniel"
+            },
+            {
+                "ro": "COCKER SPANIEL",
+                "en": "Cocker Spaniel"
+            },
+            {
+                "ro": "ROTTWEILER",
+                "en": "Rottweiler"
+            },
+            {
+                "ro": "BOXER",
+                "en": "Boxer"
+            },
+            {
+                "ro": "BICHON",
+                "en": "Bichon"
+            },
+            {
+                "ro": "BICHON MALTEZ",
+                "en": "Maltese"
+            },
+            {
+                "ro": "PEKINEZ",
+                "en": "Pekingese"
+            },
+            {
+                "ro": "DOBERMAN",
+                "en": "Doberman Pinscher"
+            },
+            {
+                "ro": "TECKEL",
+                "en": "Dachshund"
+            },
+            {
+                "ro": "LABRADOR",
+                "en": "Labrador Retriever"
+            },
+            {
+                "ro": "GOLDEN RETRIEVER",
+                "en": "Golden Retriever"
+            },
+            {
+                "ro": "BRAC GERMAN",
+                "en": "German Shorthaired Pointer"
+            },
+            {
+                "ro": "SCHNAUTZER URIAS",
+                "en": "Giant Schnauzer"
+            },
+            {
+                "ro": "DOG GERMAN",
+                "en": "Great Dane"
+            },
+            {
+                "ro": "HUSKY",
+                "en": "Siberian Husky"
+            },
+            {
+                "ro": "AMSTAFF",
+                "en": "American Staffordshire Terrier"
+            },
+            {
+                "ro": "CIOBANESC MIORITIC",
+                "en": "Mioritic Sheepdog"
+            },
+            {
+                "ro": "FOX TERRIER",
+                "en": "Fox Terrier"
+            }
+        ]
+    },
+    {
+        "species": {
+            "ro": "PISICA",
+            "en": "Cat",
+            "latin": "Felis catus"
+        },
+        "has_breeds": true,
+        "breeds": [
+            {
+                "ro": "RASA COMUNA",
+                "en": "Domestic Shorthair"
+            },
+            {
+                "ro": "EUROPEANA",
+                "en": "European Shorthair"
+            },
+            {
+                "ro": "BIRMANEZA",
+                "en": "Birman"
+            },
+            {
+                "ro": "PERSANA",
+                "en": "Persian"
+            },
+            {
+                "ro": "BRITISH SHORTHAIR",
+                "en": "British Shorthair"
+            },
+            {
+                "ro": "MAINE COON",
+                "en": "Maine Coon"
+            }
+        ]
+    },
+    {
+        "species": {
+            "ro": "LUP",
+            "en": "Wolf",
+            "latin": "Canis lupus"
+        },
+        "has_breeds": false,
+        "breeds": []
+    },
+    {
+        "species": {
+            "ro": "VACA",
+            "en": "Cattle",
+            "latin": "Bos taurus"
+        },
+        "has_breeds": true,
+        "breeds": [
+            {
+                "ro": "BALTATA ROMANEASCA",
+                "en": "Romanian Spotted"
+            },
+            {
+                "ro": "HOLSTEIN",
+                "en": "Holstein Friesian"
+            },
+            {
+                "ro": "ANGUS",
+                "en": "Angus"
+            },
+            {
+                "ro": "BRUNA",
+                "en": "Brown Swiss"
+            },
+            {
+                "ro": "SIMMENTAL",
+                "en": "Simmental"
+            }
+        ]
+    },
+    {
+        "species": {
+            "ro": "PORC",
+            "en": "Pig",
+            "latin": "Sus scrofa domesticus"
+        },
+        "has_breeds": true,
+        "breeds": [
+            {
+                "ro": "MARELE ALB",
+                "en": "Large White"
+            },
+            {
+                "ro": "HIBRID",
+                "en": "Commercial Hybrid"
+            }
+        ]
+    },
+    {
+        "species": {
+            "ro": "OAIE",
+            "en": "Sheep",
+            "latin": "Ovis aries"
+        },
+        "has_breeds": true,
+        "breeds": [
+            {
+                "ro": "TURCANA",
+                "en": "Turcana"
+            },
+            {
+                "ro": "TIGAIE",
+                "en": "Tsigai"
+            },
+            {
+                "ro": "MERINOS",
+                "en": "Merino"
+            }
+        ]
+    },
+    {
+        "species": {
+            "ro": "CAL",
+            "en": "Horse",
+            "latin": "Equus caballus"
+        },
+        "has_breeds": true,
+        "breeds": [
+            {
+                "ro": "CAL DE SPORT",
+                "en": "Sport Horse"
+            },
+            {
+                "ro": "LUSITAN",
+                "en": "Lusitano"
+            },
+            {
+                "ro": "ANDALUZ",
+                "en": "Andalusian"
+            }
+        ]
+    },
+    {
+        "species": {
+            "ro": "SOARECE",
+            "en": "Mouse",
+            "latin": "Mus musculus"
+        },
+        "has_breeds": false,
+        "breeds": []
+    },
+    {
+        "species": {
+            "ro": "SOBOLAN",
+            "en": "Rat",
+            "latin": "Rattus norvegicus"
+        },
+        "has_breeds": false,
+        "breeds": []
+    },
+    {
+        "species": {
+            "ro": "PORCUSOR DE GUINEEA",
+            "en": "Guinea Pig",
+            "latin": "Cavia porcellus"
+        },
+        "has_breeds": false,
+        "breeds": []
+    },
+    {
+        "species": {
+            "ro": "HAMSTER",
+            "en": "Hamster",
+            "latin": "Cricetinae"
+        },
+        "has_breeds": true,
+        "breeds": [
+            {
+                "ro": "SIBERIAN",
+                "en": "Siberian Hamster"
+            },
+            {
+                "ro": "PITIC",
+                "en": "Dwarf Hamster"
+            },
+            {
+                "ro": "AURIU",
+                "en": "Syrian Hamster"
+            }
+        ]
+    },
+    {
+        "species": {
+            "ro": "IEPURE",
+            "en": "Rabbit",
+            "latin": "Oryctolagus cuniculus"
+        },
+        "has_breeds": true,
+        "breeds": [
+            {
+                "ro": "CAP DE LEU",
+                "en": "Lionhead"
+            },
+            {
+                "ro": "BERBEC",
+                "en": "Lop"
+            },
+            {
+                "ro": "ANGORA",
+                "en": "Angora"
+            },
+            {
+                "ro": "IEPURE ALB",
+                "en": "White Rabbit"
+            }
+        ]
+    },
+    {
+        "species": {
+            "ro": "GAINA",
+            "en": "Chicken",
+            "latin": "Gallus gallus domesticus"
+        },
+        "has_breeds": false,
+        "breeds": []
+    },
+    {
+        "species": {
+            "ro": "PORUMBEL",
+            "en": "Pigeon",
+            "latin": "Columbidae"
+        },
+        "has_breeds": false,
+        "breeds": []
+    },
+    {
+        "species": {
+            "ro": "PERUS",
+            "en": "Budgerigar",
+            "latin": "Melopsittacus undulatus"
+        },
+        "has_breeds": false,
+        "breeds": []
+    },
+    {
+        "species": {
+            "ro": "TESTOASA",
+            "en": "Turtle",
+            "latin": "Testudines"
+        },
+        "has_breeds": true,
+        "breeds": [
+            {
+                "ro": "TESTOASA DE CALIFORNIA",
+                "en": "Red-Eared Slider"
+            }
+        ]
+    },
+    {
+        "species": {
+            "ro": "VIPERA",
+            "en": "Viper",
+            "latin": "Viperidae"
+        },
+        "has_breeds": true,
+        "breeds": [
+            {
+                "ro": "VIPERA AMMODYTES",
+                "en": "Horned Viper"
+            }
+        ]
+    },
+    {
+        "species": {
+            "ro": "BOA",
+            "en": "Boa",
+            "latin": "Boidae"
+        },
+        "has_breeds": false,
+        "breeds": []
+    },
+    {
+        "species": {
+            "ro": "TEGU",
+            "en": "Tegu",
+            "latin": "Teiidae"
+        },
+        "has_breeds": true,
+        "breeds": [
+            {
+                "ro": "TEGU AUSTRALIAN",
+                "en": "Australian Tegu"
+            }
+        ]
+    },
+    {
+        "species": {
+            "ro": "ARICI",
+            "en": "Hedgehog",
+            "latin": "Erinaceidae"
+        },
+        "has_breeds": false,
+        "breeds": []
+    },
+    {
+        "species": {
+            "ro": "CANGUR",
+            "en": "Kangaroo",
+            "latin": "Macropodidae"
+        },
+        "has_breeds": false,
+        "breeds": []
+    },
+    {
+        "species": {
+            "ro": "MAIMUTA",
+            "en": "Monkey",
+            "latin": "Primates"
+        },
+        "has_breeds": false,
+        "breeds": []
+    },
+    {
+        "species": {
+            "ro": "ELEFANT",
+            "en": "Elephant",
+            "latin": "Elephantidae"
+        },
+        "has_breeds": false,
+        "breeds": []
+    },
+    {
+        "species": {
+            "ro": "PINGUIN",
+            "en": "Penguin",
+            "latin": "Spheniscidae"
+        },
+        "has_breeds": false,
+        "breeds": []
+    },
+    {
+        "species": {
+            "ro": "ZIMBRU",
+            "en": "European Bison",
+            "latin": "Bison bonasus"
+        },
+        "has_breeds": false,
+        "breeds": []
+    },
+    {
+        "species": {
+            "ro": "DELFIN",
+            "en": "Dolphin",
+            "latin": "Delphinidae"
+        },
+        "has_breeds": false,
+        "breeds": []
+    },
+    {
+        "species": {
+            "ro": "ALBINA",
+            "en": "Honey Bee",
+            "latin": "Apis mellifera"
+        },
+        "has_breeds": false,
+        "breeds": []
+    }
+]

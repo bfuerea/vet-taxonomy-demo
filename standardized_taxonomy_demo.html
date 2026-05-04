@@ -92,10 +92,10 @@
                     </div>
                 </section>
 
-                <!-- Step 3: Species Search & List -->
-                <section id="step3-panel" class="glass p-5 rounded-3xl flex-grow flex flex-col min-h-0 step-section hidden animate-fade-in">
+                <!-- Step 2: Taxon Search & List (Species, Genera, Families) -->
+                <section id="step2-panel-taxon" class="glass p-5 rounded-3xl flex-grow flex flex-col min-h-0 step-section hidden animate-fade-in">
                     <div class="step-label">
-                        <span data-lang-ro="Pasul 3: Specii / Genuri" data-lang-en="Step 3: Species / Genera">Pasul 3: Specii / Genuri</span>
+                        <span data-lang-ro="Pasul 2: Specii / Genuri" data-lang-en="Step 2: Species / Genera">Pasul 2: Specii / Genuri</span>
                         <div class="flex items-center gap-2">
                             <span id="species-count" class="text-[10px] text-slate-500 font-mono"></span>
                             <button id="btn-browse-col" class="px-2 py-1 rounded-lg bg-slate-800 text-slate-400 text-[10px] font-medium hover:bg-slate-700 hover:text-white transition-colors flex items-center gap-1 border border-slate-700">
@@ -154,6 +154,42 @@
 
                     <!-- Species List -->
                     <div id="species-list" class="space-y-2 custom-scrollbar flex-grow overflow-y-auto"></div>
+                </section>
+
+                <!-- Step 3: CoL Species Browse (appears when Genus/Family selected) -->
+                <section id="step3-browse-panel" class="glass p-5 rounded-3xl flex-grow flex flex-col min-h-0 step-section hidden animate-fade-in">
+                    <div class="step-label">
+                        <span data-lang-ro="Pasul 3: Specii din CoL" data-lang-en="Step 3: CoL Species">Pasul 3: Specii din CoL</span>
+                        <button id="btn-back-to-taxa" class="text-[10px] text-blue-400 hover:text-blue-300 flex items-center gap-1">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                            </svg>
+                            <span data-lang-ro="înapoi" data-lang-en="back">înapoi</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Selected Genus/Family Info -->
+                    <div id="browse-taxon-info" class="mb-3 p-3 bg-slate-800/50 rounded-xl border border-slate-700">
+                        <div id="browse-taxon-name" class="text-sm font-bold text-white italic"></div>
+                        <div id="browse-taxon-rank" class="text-xs text-slate-400 mt-1"></div>
+                    </div>
+                    
+                    <!-- Browse Button -->
+                    <button id="btn-browse-col-genus" class="w-full py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 transition-all text-white font-bold text-xs flex items-center justify-center gap-2 mb-3">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
+                        </svg>
+                        <span data-lang-ro="Browse CoL pentru specii" data-lang-en="Browse CoL for species">Browse CoL pentru specii</span>
+                    </button>
+                    
+                    <!-- Loading Indicator -->
+                    <div id="genus-browse-loading" class="hidden text-center py-4">
+                        <div class="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full loading-spinner mx-auto mb-2"></div>
+                        <p class="text-xs text-slate-500" data-lang-ro="Se încarcă..." data-lang-en="Loading...">Se încarcă...</p>
+                    </div>
+                    
+                    <!-- CoL Species Results -->
+                    <div id="genus-species-list" class="space-y-2 custom-scrollbar flex-grow overflow-y-auto hidden"></div>
                 </section>
 
                 <!-- Step 4: Breed Selection -->
@@ -308,6 +344,7 @@
         let selectedTaxon = null;
         let selectedBreed = null;
         let activeTaxon = null;    // For generic selection
+        let selectedBrowseTaxon = null; // For CoL browse (when selecting a genus/family)
         let searchTimeout = null;
         let browseMode = 'local';  // 'local' | 'col' - which mode species list is showing
         let currentBrowseGenus = null; // Which genus was last browsed
@@ -446,7 +483,7 @@
             
             // Show step 3 panel
             document.getElementById('step2-panel').classList.add('hidden');
-            document.getElementById('step3-panel').classList.remove('hidden');
+            document.getElementById('step2-panel-taxon').classList.remove('hidden');
             document.getElementById('unified-search-panel').classList.add('hidden');
             document.getElementById('sub-rank-badge').classList.add('hidden');
             
@@ -517,7 +554,7 @@
 
         // ── Species List ──────────────────────────────────────────────────────────
         async function showSpeciesForCategory() {
-            document.getElementById('step3-panel').classList.remove('hidden');
+            document.getElementById('step2-panel-taxon').classList.remove('hidden');
             
             // If in CoL browse mode, fetch and display CoL species
             if (browseMode === 'col' && activeTaxon?.latin) {
@@ -630,6 +667,141 @@
                 div.onclick = () => selectTaxon(taxon);
                 list.appendChild(div);
             }
+        }
+
+        // ── Step 3: CoL Genus Browse ─────────────────────────────────────────────
+        async function browseCoLForGenus(genusName) {
+            const loadingDiv = document.getElementById('genus-browse-loading');
+            const resultsDiv = document.getElementById('genus-species-list');
+            const btn = document.getElementById('btn-browse-col-genus');
+            
+            // Show loading, hide button and previous results
+            loadingDiv.classList.remove('hidden');
+            resultsDiv.classList.add('hidden');
+            btn.classList.add('hidden');
+            
+            try {
+                // Extract just the genus name (first word)
+                const genus = genusName.split(' ')[0];
+                
+                // Check cache first
+                const cacheKey = `genus_${genus.toLowerCase()}`;
+                let species;
+                
+                if (browseCache.has(cacheKey)) {
+                    species = browseCache.get(cacheKey);
+                } else {
+                    // Fetch from CoL API
+                    const response = await fetch(
+                        `https://api.checklistbank.org/dataset/3LR/nameUsage/search?q=${encodeURIComponent(genus)}&limit=50&rank=species`
+                    );
+                    
+                    if (!response.ok) {
+                        throw new Error('CoL API error');
+                    }
+                    
+                    const data = await response.json();
+                    const results = data.results || [];
+                    
+                    // Filter to only species matching the genus
+                    species = results.filter(r => 
+                        r.scientificName && r.scientificName.toLowerCase().startsWith(genus.toLowerCase())
+                    ).slice(0, 50);
+                    
+                    // Cache results
+                    browseCache.set(cacheKey, species);
+                }
+                
+                // Render results
+                renderGenusSpeciesList(species);
+                
+            } catch (e) {
+                console.error('Genus browse error:', e);
+                resultsDiv.innerHTML = `
+                    <div class="text-center text-slate-500 py-4">
+                        <p class="text-sm">${lang === 'ro' ? 'Eroare la încărcare' : 'Error loading'}</p>
+                        <p class="text-xs text-slate-600 mt-1">${e.message}</p>
+                    </div>
+                `;
+                resultsDiv.classList.remove('hidden');
+            } finally {
+                loadingDiv.classList.add('hidden');
+            }
+        }
+        
+        function renderGenusSpeciesList(species) {
+            const list = document.getElementById('genus-species-list');
+            list.innerHTML = '';
+            list.classList.remove('hidden');
+            
+            if (species.length === 0) {
+                list.innerHTML = `
+                    <div class="text-center text-slate-500 py-4">
+                        <p class="text-sm">${lang === 'ro' ? 'Nicio specie găsită' : 'No species found'}</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Add results header
+            const headerDiv = document.createElement('div');
+            headerDiv.className = 'px-2 py-1 text-[10px] font-bold text-slate-400 uppercase mb-2';
+            headerDiv.textContent = `${species.length} ${lang === 'ro' ? 'specii găsite' : 'species found'}`;
+            list.appendChild(headerDiv);
+            
+            // Render each species
+            species.forEach((taxon) => {
+                const div = document.createElement('div');
+                div.className = 'species-item bg-slate-800/30 border-slate-700/50 hover:bg-slate-800/50';
+                
+                const colId = taxon.id || taxon.usageId || taxon.col_id;
+                const colUrl = colId ? `${COL_BASE_URL}/${COL_DATASET_ID}/taxon/${colId}` : null;
+                
+                div.innerHTML = `
+                    <div class="flex-1 min-w-0">
+                        <div class="font-bold text-slate-300 text-sm italic truncate">${taxon.scientificName}</div>
+                        <div class="text-[10px] text-slate-500">${taxon.authorship || ''}</div>
+                    </div>
+                    <div class="flex items-center gap-2 flex-shrink-0">
+                        <span class="px-2 py-0.5 bg-blue-900/30 text-blue-300 rounded text-[9px] font-bold uppercase">CoL</span>
+                        ${colUrl ? `
+                            <a href="${colUrl}" target="_blank" class="text-slate-400 hover:text-blue-400 transition-colors" title="View in CoL">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                                </svg>
+                            </a>
+                        ` : ''}
+                    </div>
+                `;
+                
+                // Click to select this CoL species
+                div.onclick = (e) => {
+                    if (e.target.tagName === 'A') return; // Don't select if clicking link
+                    
+                    // Create a taxon object for this CoL species
+                    const colTaxon = {
+                        scientific_name: taxon.scientificName,
+                        rank: 'species',
+                        col_internal_id: colId,
+                        authorship: taxon.authorship,
+                        is_col_browse: true,
+                        vernacular: { english: '', romanian: '' }
+                    };
+                    
+                    // Hide browse panel and show details
+                    hideBrowsePanel();
+                    document.getElementById('step2-panel-taxon').classList.remove('hidden');
+                    
+                    // Select the CoL species
+                    selectTaxon(colTaxon);
+                    
+                    // Highlight in list
+                    document.querySelectorAll('#genus-species-list .species-item').forEach(el => el.classList.remove('active'));
+                    div.classList.add('active');
+                };
+                
+                list.appendChild(div);
+            });
         }
 
         // ── CoL Browse Functionality ─────────────────────────────────────────────
@@ -824,14 +996,14 @@
 
             // Unified search toggle
             document.getElementById('btn-unified-search').onclick = () => {
-                document.getElementById('step3-panel').classList.add('hidden');
+                document.getElementById('step2-panel-taxon').classList.add('hidden');
                 document.getElementById('unified-search-panel').classList.remove('hidden');
                 document.getElementById('global-search').focus();
             };
 
             document.getElementById('btn-back-to-categories').onclick = () => {
                 document.getElementById('unified-search-panel').classList.add('hidden');
-                document.getElementById('step3-panel').classList.remove('hidden');
+                document.getElementById('step2-panel-taxon').classList.remove('hidden');
             };
 
             // Global search
@@ -854,6 +1026,17 @@
             document.getElementById('btn-generic').onclick = async () => {
                 if (activeTaxon) {
                     await selectGenericTaxon();
+                }
+            };
+
+            // Step 3 browse panel handlers
+            document.getElementById('btn-back-to-taxa').onclick = () => {
+                backToTaxaList();
+            };
+            
+            document.getElementById('btn-browse-col-genus').onclick = async () => {
+                if (selectedBrowseTaxon?.scientific_name) {
+                    await browseCoLForGenus(selectedBrowseTaxon.scientific_name);
                 }
             };
 
@@ -1021,6 +1204,22 @@
             document.querySelectorAll('.species-item, .search-result').forEach(el => el.classList.remove('active'));
             event?.currentTarget?.classList.add('active');
             
+            // Check if this is a non-species taxon (Genus, Family, etc.)
+            const isSpecies = taxon.rank === 'species' || taxon.scientific_name?.includes(' ');
+            
+            if (!isSpecies && taxon.scientific_name) {
+                // Show Step 3 browse panel for Genus/Family selection
+                selectedBrowseTaxon = taxon;
+                showBrowsePanel(taxon);
+                hideBreedPanel();
+                await updateDetailsPanel();
+                updateExport();
+                return;
+            }
+            
+            // Hide browse panel when selecting a species
+            hideBrowsePanel();
+            
             // Handle breeds
             if (taxon.has_breeds && taxon.breeds && taxon.breeds.length > 0) {
                 showBreedPanel(taxon.breeds);
@@ -1030,6 +1229,34 @@
             
             await updateDetailsPanel();
             updateExport();
+        }
+        
+        function showBrowsePanel(taxon) {
+            // Hide step 2 panel, show step 3 browse panel
+            document.getElementById('step2-panel-taxon').classList.add('hidden');
+            document.getElementById('step3-browse-panel').classList.remove('hidden');
+            
+            // Populate browse panel info
+            document.getElementById('browse-taxon-name').textContent = taxon.scientific_name;
+            document.getElementById('browse-taxon-rank').textContent = 
+                `${taxon.rank || 'Genus'} — ${lang === 'ro' ? 'Apasă butonul pentru a vedea speciile din CoL' : 'Click button to see CoL species'}`;
+            
+            // Hide results initially
+            document.getElementById('genus-species-list').classList.add('hidden');
+            document.getElementById('genus-species-list').innerHTML = '';
+        }
+        
+        function hideBrowsePanel() {
+            document.getElementById('step3-browse-panel').classList.add('hidden');
+            selectedBrowseTaxon = null;
+        }
+        
+        function backToTaxaList() {
+            hideBrowsePanel();
+            document.getElementById('step2-panel-taxon').classList.remove('hidden');
+            // Clear selection highlight
+            document.querySelectorAll('.species-item').forEach(el => el.classList.remove('active'));
+            selectedTaxon = null;
         }
 
         function showBreedPanel(breeds) {

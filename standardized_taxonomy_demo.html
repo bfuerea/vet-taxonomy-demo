@@ -692,15 +692,19 @@
                     species = browseCache.get(cacheKey);
                 } else {
                     // Fetch from CoL API
-                    const response = await fetch(
-                        `https://api.checklistbank.org/dataset/3LR/nameUsage/search?q=${encodeURIComponent(genus)}&limit=50&rank=species`
-                    );
+                    const apiUrl = `https://api.checklistbank.org/dataset/3LR/nameUsage/search?q=${encodeURIComponent(genus)}&limit=50&rank=species`;
+                    console.log('Fetching from CoL API:', apiUrl);
+                    
+                    const response = await fetch(apiUrl);
                     
                     if (!response.ok) {
-                        throw new Error('CoL API error');
+                        const errorText = await response.text().catch(() => 'Unknown error');
+                        console.error('CoL API error:', response.status, response.statusText, errorText);
+                        throw new Error(`CoL API error: ${response.status} ${response.statusText}`);
                     }
                     
                     const data = await response.json();
+                    console.log('CoL API response:', data);
                     const results = data.results || [];
                     
                     // Filter to only species matching the genus
